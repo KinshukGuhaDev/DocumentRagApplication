@@ -1,0 +1,27 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Dataset and generated files (if you don't want to push them)
+Notebook/
+
+# Vector databases and generated indexes
+Database/
+.Database/
+
+# OS files
+.DS_Store
+Thumbs.db
