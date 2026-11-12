@@ -18,7 +18,7 @@ SEMANTIC_THRESHOLD = 0.65
 
 #Model Configurations
 EMBEDDING_MODEL_TYPE = "sentence-transformers" # Options: "sentence-transformers", "openai"
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"  # Options: "all-MiniLM-L6-v2", "langchain-openai"
+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"  # Options: "all-MiniLM-L6-v2", "text-embedding-3-small"
 LLM_MODEL_TYPE="google" # Options: "google", "openai"
 LLM_MODEL_NAME="gemini-3.5-flash-lite" # Options: "gemini-3.5-flash-lite", "gpt-4.1-mini"
 LLM_MODEL_TEMPERATURE = 0

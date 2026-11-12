@@ -1,7 +1,7 @@
 from config import CHUNKING_STRATEGY, CHUNK_SIZE, CHUNK_OVERLAP, SEMANTIC_THRESHOLD, MIN_CHUNK_SIZE, EMBEDDING_MODEL_NAME, EMBEDDING_MODEL_TYPE, LLM_MODEL_NAME, LLM_MODEL_TYPE, OPENAI_API_KEY, GEMINI_API_KEY, LLM_MODEL_TEMPERATURE
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-import uuid
+import hashlib
 import re
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -9,6 +9,9 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from tqdm.auto import tqdm
 from pydantic import BaseModel, Field
+import spacy
+from langchain_openai import OpenAIEmbeddings
+
 
 class DataChunking:
     def __init__(
@@ -46,24 +49,46 @@ class DataChunking:
         self.embedding_model_type = embedding_model_type
         self.llm_model_name = llm_model_name
         self.llm_model_type = llm_model_type
+        self.embedding_model = None
+        self.sentence_model = None
+        self.openai_api_key = openai_api_key
+        self.gemini_api_key = gemini_api_key
+        self.embedding_cache = {}
+
+        sentence_strategies = {
+            "sentence-based",
+            "semantic",
+            "agentic",
+        }
+        if self.chunking_strategy in sentence_strategies:
+            self.sentence_model = spacy.load(
+                "en_core_web_sm",
+                disable=["ner", "textcat"]
+            )
         
-        if self.llm_model_type == "openai":
-            self.llm = ChatOpenAI(
-                model=self.llm_model_name,
-                temperature=llm_model_temperature,
-                api_key=openai_api_key,
-            )
-        elif self.llm_model_type == "google":
-            self.llm = ChatGoogleGenerativeAI(
-                model=self.llm_model_name,
-                google_api_key=gemini_api_key,
-            )
-        else:
-            raise ValueError(
-                f"Unsupported LLM model type: {self.llm_model_type}"
-            )
+        self.llm = None
+        if self.chunking_strategy == "agentic":
+            if self.llm_model_type == "openai":
+                self.llm = ChatOpenAI(
+                    model=self.llm_model_name,
+                    temperature=llm_model_temperature,
+                    api_key=openai_api_key,
+                )
+            elif self.llm_model_type == "google":
+                self.llm = ChatGoogleGenerativeAI(
+                    model=self.llm_model_name,
+                    google_api_key=gemini_api_key,
+                )
+            else:
+                raise ValueError(
+                    f"Unsupported LLM model type: {self.llm_model_type}"
+                )
 
-
+        self.oversized_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=0,
+            separators=["\n\n", "\n", " ", ""],
+        )
         if chunk_size <= 0:
             raise ValueError("chunk_size must be greater than 0")
 
@@ -93,8 +118,8 @@ class DataChunking:
         split_documents = chunking_method()
 
         print(
-            f"✅ Generated {len(documents)} documents "
-            f"into {len(split_documents)} chunks."
+            f"✅ Processed {len(documents)} source documents "
+            f"and generated {len(split_documents)} chunks."
         )
         print("_" * 50)
         print("\n")
@@ -111,8 +136,19 @@ class DataChunking:
                 continue
 
             metadata = dict(source_doc.metadata)
+            source_identity = (
+                f"{metadata.get('source_file', metadata.get('source', ''))}|"
+                f"{metadata.get('page', '')}|"
+                f"{strategy}|"
+                f"{text}"
+            )
+
+            chunk_id = hashlib.sha256(
+                source_identity.encode("utf-8")
+            ).hexdigest()
+
             metadata.update({
-                "chunk_id": str(uuid.uuid4()),
+                "chunk_id": chunk_id,
                 "chunk_index": index,
                 "chunk_strategy": strategy,
                 "content_length": len(text),
@@ -129,23 +165,29 @@ class DataChunking:
 
     def _get_sentences(self, text):
         """
-        Lightweight sentence segmentation.
+        Sentence segmentation using spaCy.
         """
-        return [
-            sentence.strip()
-            for sentence in re.split(
-                r'(?<=[.!?])\s+|\n+',
-                text.strip(),
+        if self.sentence_model is None:
+            raise RuntimeError(
+                "spaCy sentence model is not loaded for the "
+                f"'{self.chunking_strategy}' strategy."
             )
-            if sentence.strip()
+
+        doc = self.sentence_model(text)
+
+        return [
+            sentence.text.strip()
+            for sentence in doc.sents
+            if sentence.text.strip()
         ]
 
     def _pack_text(self, units):
         """
-        Pack sentences or topic groups into chunks
-        without exceeding chunk_size.
+        Pack sentences or topic groups into chunks without
+        exceeding chunk_size.
 
-        Oversized units are recursively split.
+        Oversized units are split recursively without overlap.
+        Overlap is applied afterward by _apply_overlap().
         """
         chunks = []
         current = ""
@@ -161,13 +203,9 @@ class DataChunking:
                     chunks.append(current)
                     current = ""
 
-                splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=self.chunk_size,
-                    chunk_overlap=0,
-                    separators=["\n\n", "\n", " ", ""],
+                chunks.extend(
+                    self.oversized_splitter.split_text(unit)
                 )
-
-                chunks.extend(splitter.split_text(unit))
                 continue
 
             candidate = (
@@ -189,19 +227,15 @@ class DataChunking:
 
     def _apply_overlap(self, chunks):
         """
-        Add word-boundary overlap without
-        exceeding chunk_size.
+        Add trailing whole-word overlap while keeping every chunk
+        within chunk_size.
         """
-
         if self.chunk_overlap <= 0:
             return chunks
 
-        result = []
-        for index, chunk in enumerate(chunks):
-            if index == 0:
-                result.append(chunk)
-                continue
+        result = [chunks[0]] if chunks else []
 
+        for chunk in chunks[1:]:
             available = self.chunk_size - len(chunk)
 
             if available <= 1:
@@ -213,24 +247,24 @@ class DataChunking:
                 available - 1
             )
 
-            previous_words = chunks[index - 1].split()
+            previous_words = result[-1].split()
             overlap_words = []
             overlap_length = 0
 
             for word in reversed(previous_words):
-                added_length = len(word) + (
+                word_length = len(word) + (
                     1 if overlap_words else 0
                 )
 
-                if overlap_length + added_length > max_overlap:
+                if overlap_length + word_length > max_overlap:
                     break
 
                 overlap_words.insert(0, word)
-                overlap_length += added_length
+                overlap_length += word_length
 
             if overlap_words:
-                prefix = " ".join(overlap_words)
-                result.append(f"{prefix} {chunk}")
+                overlap = " ".join(overlap_words)
+                result.append(f"{overlap} {chunk}")
             else:
                 result.append(chunk)
 
@@ -238,47 +272,57 @@ class DataChunking:
 
     def _get_embedding_model(self):
         """
-        Lazy-load the embedding model.
+        Load the embedding model once and reuse it.
         """
+        if self.embedding_model is not None:
+            return self.embedding_model
+
         if self.embedding_model_type == "sentence-transformers":
             self.embedding_model = SentenceTransformer(
                 self.embedding_model_name
             )
+        elif self.embedding_model_type == "openai":
+            self.embedding_model = OpenAIEmbeddings(
+                model=self.embedding_model_name,
+                openai_api_key=self.openai_api_key,
+            )
         else:
             raise ValueError(
-                f"Unknown embedding model type: {self.embedding_model_type}"
+                f"Unknown embedding model type: "
+                f"{self.embedding_model_type}"
             )
 
         return self.embedding_model
     
     def fixed_size_chunking(self):
-        """
-        Exact character-window chunking.
-
-        Uses fixed-size windows with configurable
-        character overlap.
-        """
-        all_chunks = []        
+        all_chunks = []
         step = self.chunk_size - self.chunk_overlap
 
         for doc in self.documents:
             text = doc.page_content
             chunks = []
-            for start in range(0, len(text), step):
-                chunk = text[start:start + self.chunk_size]
-                if chunk:
-                    chunks.append(chunk)
 
-                if start + self.chunk_size >= len(text):
+            for start in range(0, len(text), step):
+                # Snap start forward to a word boundary (except at the very beginning)
+                if start > 0:
+                    while start < len(text) and not text[start - 1].isspace():
+                        start += 1
+
+                end = min(start + self.chunk_size, len(text))
+                chunk = text[start:end]
+
+                if end < len(text):
+                    boundary = max(chunk.rfind(" "), chunk.rfind("\n"))
+                    if boundary > 0:
+                        chunk = chunk[:boundary]
+
+                if chunk.strip():
+                    chunks.append(chunk.strip())
+
+                if end >= len(text):
                     break
 
-            all_chunks.extend(
-                self._create_documents(
-                    doc,
-                    chunks,
-                    "fixed-size",
-                )
-            )
+            all_chunks.extend(self._create_documents(doc, chunks, "fixed-size"))
 
         return all_chunks
 
@@ -292,7 +336,16 @@ class DataChunking:
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            separators=["\n\n", "\n", " ", ""],
+            separators=[
+                "\n\n",
+                "\n",
+                "### ",
+                "## ",
+                "# ",
+                ". ",
+                " ",
+                "",
+            ],
         )
 
         all_chunks = []
@@ -313,17 +366,16 @@ class DataChunking:
         return all_chunks
 
     def sentence_based_chunking(self):
-        """
-        Split into sentences and group them into
-        dynamically sized chunks.
-        """
         all_chunks = []
+
         for doc in self.documents:
-            sentences = self._get_sentences(
-                doc.page_content
-            )
+            if not doc.page_content.strip():
+                continue
+
+            sentences = self._get_sentences(doc.page_content)
             chunks = self._pack_text(sentences)
             chunks = self._apply_overlap(chunks)
+
             all_chunks.extend(
                 self._create_documents(
                     doc,
@@ -334,7 +386,7 @@ class DataChunking:
 
         return all_chunks
 
-    def structured_chunking(self, documents):
+    def structured_chunking(self):
         """
         Split based on detected headings and sections.
 
@@ -357,7 +409,7 @@ class DataChunking:
             re.IGNORECASE,
         )
 
-        for doc in documents:
+        for doc in self.documents:
             sections = []
             current_lines = []
 
@@ -382,14 +434,13 @@ class DataChunking:
                 )
 
             chunks = []
+            splitter = RecursiveCharacterTextSplitter(
+                chunk_size=self.chunk_size,
+                chunk_overlap=self.chunk_overlap,
+                separators=["\n\n", "\n", " ", ""],
+            )
 
             for section in sections:
-                splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=self.chunk_size,
-                    chunk_overlap=self.chunk_overlap,
-                    separators=["\n\n", "\n", " ", ""],
-                )
-
                 chunks.extend(
                     splitter.split_text(section)
                 )
@@ -415,7 +466,7 @@ class DataChunking:
                 "⚠️ No LLM configured. "
                 "Falling back to recursive chunking."
             )
-            return self.recursive_chunking(self.documents)
+            return self.recursive_chunking()
 
         class TopicBoundaries(BaseModel):
             break_before: list[int] = Field(
@@ -428,15 +479,12 @@ class DataChunking:
         structured_llm = self.llm.with_structured_output(
             TopicBoundaries
         )
-
         all_chunks = []
         max_window_chars = 6000
-
         # STEP 1: Prepare windows for all documents
         prepared_documents = []
 
         for doc in self.documents:
-
             sentences = self._get_sentences(
                 doc.page_content
             )
@@ -488,11 +536,8 @@ class DataChunking:
         ) as progress:
 
             for doc, windows in prepared_documents:
-
                 chunks = []
-
                 for window in windows:
-
                     numbered_text = "\n".join(
                         f"{i}: {sentence}"
                         for i, sentence in enumerate(window)
@@ -515,20 +560,22 @@ class DataChunking:
                         {numbered_text}
                     """
 
-                    # Gemini API call
-                    response = structured_llm.invoke(prompt)
-
-                    boundaries = sorted({
-                        i for i in response.break_before
-                        if type(i) is int
-                        and 0 < i < len(window)
-                    })
+                    # LLM API call
+                    try:
+                        response = structured_llm.invoke(prompt)
+                        boundaries = sorted({
+                            i for i in response.break_before
+                            if isinstance(i, int)
+                            and 0 < i < len(window)
+                        })
+                    except Exception as error:
+                        print(f"⚠️ Agentic window failed: {error}")
+                        boundaries = []
 
                     starts = [0] + boundaries
                     ends = boundaries + [len(window)]
 
                     for start, end in zip(starts, ends):
-
                         topic_text = " ".join(
                             window[start:end]
                         )
@@ -539,13 +586,11 @@ class DataChunking:
 
                     # Update after successful API call
                     progress.update(1)
-
                     progress.set_postfix(
                         chunks=len(all_chunks) + len(chunks)
                     )
 
                 chunks = self._apply_overlap(chunks)
-
                 all_chunks.extend(
                     self._create_documents(
                         doc,
@@ -558,7 +603,6 @@ class DataChunking:
             f"✅ Agentic chunking completed: "
             f"{len(all_chunks)} chunks generated."
         )
-
         return all_chunks
     
     def semantic_chunking(self):
@@ -583,12 +627,35 @@ class DataChunking:
                 chunks = self._pack_text(sentences)
 
             else:
-                embeddings = model.encode(
-                    sentences,
-                    batch_size=32,
-                    normalize_embeddings=True,
-                    show_progress_bar=False,
-                )
+                if self.embedding_model_type == "sentence-transformers":
+                    embeddings = model.encode(
+                        sentences,
+                        batch_size=32,
+                        normalize_embeddings=True,
+                        show_progress_bar=False,
+                    )
+                elif self.embedding_model_type == "openai":
+                    embeddings = np.asarray(
+                        model.embed_documents(sentences),
+                        dtype=np.float32,
+                    )
+
+                    norms = np.linalg.norm(
+                        embeddings,
+                        axis=1,
+                        keepdims=True,
+                    )
+
+                    embeddings = embeddings / np.maximum(
+                        norms,
+                        1e-12,
+                    )
+
+                else:
+                    raise ValueError(
+                        f"Unsupported embedding model type: "
+                        f"{self.embedding_model_type}"
+                    )
 
                 similarities = np.sum(
                     embeddings[:-1] * embeddings[1:],

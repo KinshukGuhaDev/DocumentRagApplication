@@ -16,3 +16,4 @@ langchain-openai
 pydantic 
 python-dotenv
 tqdm
+spacy
