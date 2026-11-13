@@ -11,10 +11,11 @@ SINGLE_FILE_PATH = "Datasets/pdf_files/gpt3_models.pdf"
 
 #Chunking Configurations
 CHUNKING_STRATEGY = "agentic" # Options: "sentence-based", "agentic", "recursive", "fixed-size", "semantic", "structured"
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
-MIN_CHUNK_SIZE = 200
-SEMANTIC_THRESHOLD = 0.65
+CHUNK_SIZE = None # Leave None to dynamically adjust chunk size based on the strategy
+SEMANTIC_THRESHOLDS = {
+    "sentence-transformers": 0.65,
+    "openai": 0.80,
+}
 
 #Model Configurations
 EMBEDDING_MODEL_TYPE = "sentence-transformers" # Options: "sentence-transformers", "openai"

@@ -1,4 +1,16 @@
-from config import CHUNKING_STRATEGY, CHUNK_SIZE, CHUNK_OVERLAP, SEMANTIC_THRESHOLD, MIN_CHUNK_SIZE, EMBEDDING_MODEL_NAME, EMBEDDING_MODEL_TYPE, LLM_MODEL_NAME, LLM_MODEL_TYPE, OPENAI_API_KEY, GEMINI_API_KEY, LLM_MODEL_TEMPERATURE
+from config import (
+    CHUNKING_STRATEGY,
+    CHUNK_SIZE,
+    SEMANTIC_THRESHOLDS,
+    MIN_CHUNK_SIZE,
+    EMBEDDING_MODEL_NAME,
+    EMBEDDING_MODEL_TYPE,
+    LLM_MODEL_NAME,
+    LLM_MODEL_TYPE,
+    OPENAI_API_KEY,
+    GEMINI_API_KEY,
+    LLM_MODEL_TEMPERATURE,
+)
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import hashlib
@@ -11,18 +23,17 @@ from tqdm.auto import tqdm
 from pydantic import BaseModel, Field
 import spacy
 from langchain_openai import OpenAIEmbeddings
-
+import tiktoken
 
 class DataChunking:
     def __init__(
         self,
         chunking_strategy:str = CHUNKING_STRATEGY,
         chunk_size:int = CHUNK_SIZE,
-        chunk_overlap:int = CHUNK_OVERLAP,
         min_chunk_size:int = MIN_CHUNK_SIZE,
         embedding_model_name:str = EMBEDDING_MODEL_NAME,
         embedding_model_type:str = EMBEDDING_MODEL_TYPE,
-        semantic_threshold:float = SEMANTIC_THRESHOLD,
+        semantic_thresholds: dict = SEMANTIC_THRESHOLDS,
         llm_model_name:str = LLM_MODEL_NAME,
         llm_model_type:str = LLM_MODEL_TYPE,
         llm_model_temperature:float = LLM_MODEL_TEMPERATURE,
@@ -30,13 +41,10 @@ class DataChunking:
         gemini_api_key:str = GEMINI_API_KEY,
     ):
         self.chunking_strategy = chunking_strategy
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
-        self.semantic_threshold = semantic_threshold
-        self.min_chunk_size = min(
-            max(0, min_chunk_size),
-            chunk_size,
-        )
+        self._get_chunk_size(chunk_size, min_chunk_size)
+        self.chunk_overlap = int(chunk_size * 0.15)
+        self.semantic_thresholds = semantic_thresholds
+        
         self.strategies = {
             "sentence-based": self.sentence_based_chunking,
             "agentic": self.agentic_chunking,
@@ -53,7 +61,8 @@ class DataChunking:
         self.sentence_model = None
         self.openai_api_key = openai_api_key
         self.gemini_api_key = gemini_api_key
-        self.embedding_cache = {}
+        self.agentic_cache = {}
+        self.tokenizer = tiktoken.get_encoding("cl100k_base")
 
         sentence_strategies = {
             "sentence-based",
@@ -87,20 +96,9 @@ class DataChunking:
         self.oversized_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=0,
+            length_function=len,
             separators=["\n\n", "\n", " ", ""],
         )
-        if chunk_size <= 0:
-            raise ValueError("chunk_size must be greater than 0")
-
-        if not 0 <= chunk_overlap < chunk_size:
-            raise ValueError(
-                "chunk_overlap must be >= 0 and < chunk_size"
-            )
-
-        if not -1 <= semantic_threshold <= 1:
-            raise ValueError(
-                "semantic_threshold must be between -1 and 1"
-            )
 
     def split_documents_into_chunks(self, documents):
         print("_" * 50)
@@ -125,6 +123,49 @@ class DataChunking:
         print("\n")
         return split_documents
 
+    def _length_in_tokens(self, text):
+        return len(self.tokenizer.encode(text))
+
+    def _get_chunk_size(self, chunk_size=None, min_chunk_size=None):
+        if chunk_size is None:
+            chunk_size = 1000
+
+        if min_chunk_size is None:
+            min_chunk_size = int(chunk_size * 0.2)
+
+        if chunk_size <= 0:
+            raise ValueError("chunk_size must be greater than zero")
+
+        if min_chunk_size < 0:
+            raise ValueError("min_chunk_size cannot be negative")
+
+        if min_chunk_size > chunk_size:
+            min_chunk_size = chunk_size
+
+        self.chunk_size = chunk_size
+        self.min_chunk_size = min_chunk_size
+            
+    def _healthy_chunks(self, chunks):
+        cleaned = [
+            chunk.strip()
+            for chunk in chunks
+            if chunk and chunk.strip()
+        ]
+
+        healthy = []
+
+        for chunk in cleaned:
+            if (
+                healthy
+                and len(chunk) < self.min_chunk_size
+                and len(healthy[-1]) + len(chunk) + 1 <= self.chunk_size
+            ):
+                healthy[-1] = f"{healthy[-1]} {chunk}"
+            else:
+                healthy.append(chunk)
+
+        return healthy
+    
     def _create_documents(self, source_doc, chunks, strategy):
         """
         Preserve source metadata and attach chunk metadata.
@@ -303,26 +344,35 @@ class DataChunking:
             chunks = []
 
             for start in range(0, len(text), step):
-                # Snap start forward to a word boundary (except at the very beginning)
-                if start > 0:
-                    while start < len(text) and not text[start - 1].isspace():
-                        start += 1
-
                 end = min(start + self.chunk_size, len(text))
                 chunk = text[start:end]
 
                 if end < len(text):
-                    boundary = max(chunk.rfind(" "), chunk.rfind("\n"))
+                    boundary = max(
+                        chunk.rfind(" "),
+                        chunk.rfind("\n"),
+                    )
+
                     if boundary > 0:
                         chunk = chunk[:boundary]
 
-                if chunk.strip():
-                    chunks.append(chunk.strip())
+                chunk = chunk.strip()
+
+                if chunk:
+                    chunks.append(chunk)
 
                 if end >= len(text):
                     break
 
-            all_chunks.extend(self._create_documents(doc, chunks, "fixed-size"))
+            chunks = self._healthy_chunks(chunks)
+
+            all_chunks.extend(
+                self._create_documents(
+                    doc,
+                    chunks,
+                    "fixed-size",
+                )
+            )
 
         return all_chunks
 
@@ -355,6 +405,7 @@ class DataChunking:
                 doc.page_content
             )
 
+            chunks = self._healthy_chunks(chunks)
             all_chunks.extend(
                 self._create_documents(
                     doc,
@@ -374,6 +425,7 @@ class DataChunking:
 
             sentences = self._get_sentences(doc.page_content)
             chunks = self._pack_text(sentences)
+            chunks = self._healthy_chunks(chunks)
             chunks = self._apply_overlap(chunks)
 
             all_chunks.extend(
@@ -402,9 +454,10 @@ class DataChunking:
 
         heading_pattern = re.compile(
             r"^(?:"
-            r"#{1,6}\s+.+"
-            r"|(?:Chapter|Section)\s+\d+.*"
-            r"|\d+(?:\.\d+)*[.)]?\s+.+"
+            r"#{1,6}\s+\S.+"
+            r"|Chapter\s+\d+(?:\s*[:.-]\s*|\s+)\S.+"
+            r"|Section\s+\d+(?:\s*[:.-]\s*|\s+)\S.+"
+            r"|\d+(?:\.\d+)+\s+[A-Z][^\n]{2,}"
             r")$",
             re.IGNORECASE,
         )
@@ -437,14 +490,15 @@ class DataChunking:
             splitter = RecursiveCharacterTextSplitter(
                 chunk_size=self.chunk_size,
                 chunk_overlap=self.chunk_overlap,
+                length_function=len,
                 separators=["\n\n", "\n", " ", ""],
             )
-
             for section in sections:
                 chunks.extend(
                     splitter.split_text(section)
                 )
 
+            chunks = self._healthy_chunks(chunks)
             all_chunks.extend(
                 self._create_documents(
                     doc,
@@ -562,12 +616,21 @@ class DataChunking:
 
                     # LLM API call
                     try:
-                        response = structured_llm.invoke(prompt)
-                        boundaries = sorted({
-                            i for i in response.break_before
-                            if isinstance(i, int)
-                            and 0 < i < len(window)
-                        })
+                        cache_key = hashlib.sha256(
+                            numbered_text.encode("utf-8")
+                        ).hexdigest()
+
+                        if cache_key in self.agentic_cache:
+                            boundaries = self.agentic_cache[cache_key]
+                        else:
+                            response = structured_llm.invoke(prompt)
+                            boundaries = sorted({
+                                index for index in response.break_before
+                                if isinstance(index, int)
+                                and 0 < index < len(window)
+                            })
+
+                            self.agentic_cache[cache_key] = boundaries
                     except Exception as error:
                         print(f"⚠️ Agentic window failed: {error}")
                         boundaries = []
@@ -589,7 +652,7 @@ class DataChunking:
                     progress.set_postfix(
                         chunks=len(all_chunks) + len(chunks)
                     )
-
+                chunks = self._healthy_chunks(chunks)
                 chunks = self._apply_overlap(chunks)
                 all_chunks.extend(
                     self._create_documents(
@@ -669,10 +732,12 @@ class DataChunking:
                     next_sentence = sentences[index + 1]
                     current_text = " ".join(current)
 
-                    topic_changed = (
-                        float(similarity)
-                        < self.semantic_threshold
+                    threshold = self.semantic_thresholds.get(
+                        self.embedding_model_type,
+                        0.65,
                     )
+
+                    topic_changed = float(similarity) < threshold
 
                     size_exceeded = (
                         len(current_text)
@@ -700,6 +765,7 @@ class DataChunking:
                         self._pack_text([group])
                     )
 
+            chunks = self._healthy_chunks(chunks)
             chunks = self._apply_overlap(chunks)
 
             all_chunks.extend(
