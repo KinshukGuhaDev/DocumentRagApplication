@@ -1,6 +1,7 @@
-langchain
-langchain-core
-langchain-community
+langchain==0.3.30
+langchain-core==0.3.86
+langchain-community==0.3.31
+langchain-text-splitters==0.3.11
 pypdf
 pymupdf
 ipykernel
@@ -11,9 +12,12 @@ pandas
 python-calamine
 sentence-transformers
 chromadb
-langchain-google-genai
-langchain-openai
+langchain-google-genai==2.1.12
+langchain-openai==0.3.35
+pydantic==2.14.3
+tenacity==9.1.4
 pydantic 
 python-dotenv
 tqdm
 spacy
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

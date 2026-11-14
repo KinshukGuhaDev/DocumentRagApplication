@@ -2,7 +2,6 @@ from config import (
     CHUNKING_STRATEGY,
     CHUNK_SIZE,
     SEMANTIC_THRESHOLDS,
-    MIN_CHUNK_SIZE,
     EMBEDDING_MODEL_NAME,
     EMBEDDING_MODEL_TYPE,
     LLM_MODEL_NAME,
@@ -21,7 +20,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from tqdm.auto import tqdm
 from pydantic import BaseModel, Field
-import spacy
 from langchain_openai import OpenAIEmbeddings
 import tiktoken
 
@@ -30,7 +28,6 @@ class DataChunking:
         self,
         chunking_strategy:str = CHUNKING_STRATEGY,
         chunk_size:int = CHUNK_SIZE,
-        min_chunk_size:int = MIN_CHUNK_SIZE,
         embedding_model_name:str = EMBEDDING_MODEL_NAME,
         embedding_model_type:str = EMBEDDING_MODEL_TYPE,
         semantic_thresholds: dict = SEMANTIC_THRESHOLDS,
@@ -41,8 +38,8 @@ class DataChunking:
         gemini_api_key:str = GEMINI_API_KEY,
     ):
         self.chunking_strategy = chunking_strategy
-        self._get_chunk_size(chunk_size, min_chunk_size)
-        self.chunk_overlap = int(chunk_size * 0.15)
+        self._get_chunk_size(chunk_size)
+        self.chunk_overlap = int(self.chunk_size * 0.15)
         self.semantic_thresholds = semantic_thresholds
         
         self.strategies = {
@@ -70,10 +67,19 @@ class DataChunking:
             "agentic",
         }
         if self.chunking_strategy in sentence_strategies:
-            self.sentence_model = spacy.load(
-                "en_core_web_sm",
-                disable=["ner", "textcat"]
-            )
+            try:
+                import spacy
+
+                self.sentence_model = spacy.load(
+                    "en_core_web_sm",
+                    disable=["ner", "textcat"]
+                )
+            except Exception as error:
+                print(
+                    "⚠️ spaCy is unavailable; using the built-in "
+                    f"sentence splitter instead. Reason: {error}"
+                )
+                self.sentence_model = None
         
         self.llm = None
         if self.chunking_strategy == "agentic":
@@ -126,11 +132,9 @@ class DataChunking:
     def _length_in_tokens(self, text):
         return len(self.tokenizer.encode(text))
 
-    def _get_chunk_size(self, chunk_size=None, min_chunk_size=None):
+    def _get_chunk_size(self, chunk_size=None):
         if chunk_size is None:
             chunk_size = 1000
-
-        if min_chunk_size is None:
             min_chunk_size = int(chunk_size * 0.2)
 
         if chunk_size <= 0:
@@ -209,10 +213,14 @@ class DataChunking:
         Sentence segmentation using spaCy.
         """
         if self.sentence_model is None:
-            raise RuntimeError(
-                "spaCy sentence model is not loaded for the "
-                f"'{self.chunking_strategy}' strategy."
-            )
+            return [
+                sentence.strip()
+                for sentence in re.split(
+                    r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])|\n+",
+                    text.strip(),
+                )
+                if sentence.strip()
+            ]
 
         doc = self.sentence_model(text)
 

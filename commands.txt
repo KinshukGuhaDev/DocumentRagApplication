@@ -1,0 +1,4 @@
+# Run this commands to setup the project 
+python -m venv .venv
+.venv\Scripts\Activate.ps1  
+python -m pip install -r requirements.txt

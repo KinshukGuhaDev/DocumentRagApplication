@@ -10,7 +10,7 @@ IS_SINGLE_FILE = True
 SINGLE_FILE_PATH = "Datasets/pdf_files/gpt3_models.pdf"
 
 #Chunking Configurations
-CHUNKING_STRATEGY = "agentic" # Options: "sentence-based", "agentic", "recursive", "fixed-size", "semantic", "structured"
+CHUNKING_STRATEGY = "sentence-based" # Options: "sentence-based", "agentic", "recursive", "fixed-size", "semantic", "structured"
 CHUNK_SIZE = None # Leave None to dynamically adjust chunk size based on the strategy
 SEMANTIC_THRESHOLDS = {
     "sentence-transformers": 0.65,
