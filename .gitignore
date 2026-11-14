@@ -5,6 +5,7 @@ env/
 
 # Python cache
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 
@@ -15,7 +16,7 @@ __pycache__/
 # Logs
 *.log
 
-# Dataset and generated files (if you don't want to push them)
+# Dataset and generated files
 Notebook/
 
 # Vector databases and generated indexes
