@@ -7,7 +7,7 @@ load_dotenv()
 DIRECTORY_PATH = "Datasets/pdf_files"
 FILE_TYPE = "pdf" # Options: "pdf", "docx", "txt", "csv", "json", "sql"
 IS_SINGLE_FILE = True
-SINGLE_FILE_PATH = "Datasets/pdf_files/gpt3_models.pdf"
+SINGLE_FILE_PATH = "Datasets/pdf_files/01_the_future_of_vertical_forests.pdf"
 
 #Chunking Configurations
 CHUNKING_STRATEGY = "sentence-based" # Options: "sentence-based", "agentic", "recursive", "fixed-size", "semantic", "structured"
@@ -22,7 +22,7 @@ EMBEDDING_MODEL_TYPE = "sentence-transformers" # Options: "sentence-transformers
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"  # Options: "all-MiniLM-L6-v2", "text-embedding-3-small"
 LLM_MODEL_TYPE="google" # Options: "google", "openai"
 LLM_MODEL_NAME="gemini-3.5-flash-lite" # Options: "gemini-3.5-flash-lite", "gpt-4.1-mini"
-LLM_MODEL_TEMPERATURE = 0
+LLM_MODEL_TEMPERATURE = 0                     
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 

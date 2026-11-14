@@ -84,12 +84,20 @@ class DataChunking:
         self.llm = None
         if self.chunking_strategy == "agentic":
             if self.llm_model_type == "openai":
+                if not self.openai_api_key:
+                    raise ValueError(
+                        "OPENAI_API_KEY is required for OpenAI embeddings"
+                    )
                 self.llm = ChatOpenAI(
                     model=self.llm_model_name,
                     temperature=llm_model_temperature,
                     api_key=openai_api_key,
                 )
             elif self.llm_model_type == "google":
+                if not self.gemini_api_key:
+                    raise ValueError(
+                        "GEMINI_API_KEY is required for Google embeddings"
+                    )
                 self.llm = ChatGoogleGenerativeAI(
                     model=self.llm_model_name,
                     google_api_key=gemini_api_key,
@@ -107,6 +115,7 @@ class DataChunking:
         )
 
     def split_documents_into_chunks(self, documents):
+        print("Creating chunks...")
         print("_" * 50)
         print(
             f"🔄 Started Generating chunks using "
