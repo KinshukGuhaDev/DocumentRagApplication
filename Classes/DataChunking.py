@@ -13,6 +13,7 @@ from config import (
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import hashlib
+import math
 import re
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -49,6 +50,7 @@ class DataChunking:
             "fixed-size": self.fixed_size_chunking,
             "semantic": self.semantic_chunking,
             "structured": self.structured_chunking,
+            "hybrid": self.hybrid_chunking,
         }
         self.embedding_model_name = embedding_model_name
         self.embedding_model_type = embedding_model_type
@@ -59,12 +61,20 @@ class DataChunking:
         self.openai_api_key = openai_api_key
         self.gemini_api_key = gemini_api_key
         self.agentic_cache = {}
-        self.tokenizer = tiktoken.get_encoding("cl100k_base")
+        try:
+            self.tokenizer = tiktoken.get_encoding("cl100k_base")
+        except Exception as error:
+            print(
+                "⚠️ Tokenizer cache is unavailable; using an approximate "
+                f"token counter. Reason: {error}"
+            )
+            self.tokenizer = None
 
         sentence_strategies = {
             "sentence-based",
             "semantic",
             "agentic",
+            "hybrid",
         }
         if self.chunking_strategy in sentence_strategies:
             try:
@@ -110,7 +120,7 @@ class DataChunking:
         self.oversized_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=0,
-            length_function=len,
+            length_function=self._length_in_tokens,
             separators=["\n\n", "\n", " ", ""],
         )
 
@@ -139,11 +149,18 @@ class DataChunking:
         return split_documents
 
     def _length_in_tokens(self, text):
-        return len(self.tokenizer.encode(text))
+        if self.tokenizer is not None:
+            return len(self.tokenizer.encode(text))
+
+        words = len(text.split())
+        characters = len(text)
+        return max(words, math.ceil(characters / 4), 1)
 
     def _get_chunk_size(self, chunk_size=None):
         if chunk_size is None:
-            chunk_size = 1000
+            chunk_size = 220
+            min_chunk_size = int(chunk_size * 0.2)
+        else:
             min_chunk_size = int(chunk_size * 0.2)
 
         if chunk_size <= 0:
@@ -170,8 +187,10 @@ class DataChunking:
         for chunk in cleaned:
             if (
                 healthy
-                and len(chunk) < self.min_chunk_size
-                and len(healthy[-1]) + len(chunk) + 1 <= self.chunk_size
+                and self._length_in_tokens(chunk) < self.min_chunk_size
+                and self._length_in_tokens(
+                    healthy[-1] + " " + chunk
+                ) <= self.chunk_size
             ):
                 healthy[-1] = f"{healthy[-1]} {chunk}"
             else:
@@ -206,6 +225,7 @@ class DataChunking:
                 "chunk_index": index,
                 "chunk_strategy": strategy,
                 "content_length": len(text),
+                "token_count": self._length_in_tokens(text),
             })
 
             result.append(
@@ -256,7 +276,7 @@ class DataChunking:
             if not unit:
                 continue
 
-            if len(unit) > self.chunk_size:
+            if self._length_in_tokens(unit) > self.chunk_size:
                 if current:
                     chunks.append(current)
                     current = ""
@@ -270,7 +290,7 @@ class DataChunking:
                 f"{current} {unit}" if current else unit
             )
 
-            if len(candidate) <= self.chunk_size:
+            if self._length_in_tokens(candidate) <= self.chunk_size:
                 current = candidate
             else:
                 if current:
@@ -294,23 +314,20 @@ class DataChunking:
         result = [chunks[0]] if chunks else []
 
         for chunk in chunks[1:]:
-            available = self.chunk_size - len(chunk)
+            available = self.chunk_size - self._length_in_tokens(chunk)
 
             if available <= 1:
                 result.append(chunk)
                 continue
 
-            max_overlap = min(
-                self.chunk_overlap,
-                available - 1
-            )
+            max_overlap = min(self.chunk_overlap, max(available - 1, 0))
 
             previous_words = result[-1].split()
             overlap_words = []
             overlap_length = 0
 
             for word in reversed(previous_words):
-                word_length = len(word) + (
+                word_length = self._length_in_tokens(word) + (
                     1 if overlap_words else 0
                 )
 
@@ -353,34 +370,16 @@ class DataChunking:
         return self.embedding_model
     
     def fixed_size_chunking(self):
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+            length_function=self._length_in_tokens,
+            separators=["\n\n", "\n", " ", ""],
+        )
         all_chunks = []
-        step = self.chunk_size - self.chunk_overlap
 
         for doc in self.documents:
-            text = doc.page_content
-            chunks = []
-
-            for start in range(0, len(text), step):
-                end = min(start + self.chunk_size, len(text))
-                chunk = text[start:end]
-
-                if end < len(text):
-                    boundary = max(
-                        chunk.rfind(" "),
-                        chunk.rfind("\n"),
-                    )
-
-                    if boundary > 0:
-                        chunk = chunk[:boundary]
-
-                chunk = chunk.strip()
-
-                if chunk:
-                    chunks.append(chunk)
-
-                if end >= len(text):
-                    break
-
+            chunks = splitter.split_text(doc.page_content)
             chunks = self._healthy_chunks(chunks)
 
             all_chunks.extend(
@@ -402,7 +401,7 @@ class DataChunking:
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
-            length_function=len,
+            length_function=self._length_in_tokens,
             separators=[
                 "\n\n",
                 "\n",
@@ -507,7 +506,7 @@ class DataChunking:
             splitter = RecursiveCharacterTextSplitter(
                 chunk_size=self.chunk_size,
                 chunk_overlap=self.chunk_overlap,
-                length_function=len,
+                length_function=self._length_in_tokens,
                 separators=["\n\n", "\n", " ", ""],
             )
             for section in sections:
@@ -551,7 +550,7 @@ class DataChunking:
             TopicBoundaries
         )
         all_chunks = []
-        max_window_chars = 6000
+        max_window_tokens = 1200
         # STEP 1: Prepare windows for all documents
         prepared_documents = []
 
@@ -571,15 +570,16 @@ class DataChunking:
 
                 if (
                     current_window
-                    and current_length + len(sentence) + 1
-                    > max_window_chars
+                    and current_length
+                    + self._length_in_tokens(sentence)
+                    > max_window_tokens
                 ):
                     windows.append(current_window)
                     current_window = []
                     current_length = 0
 
                 current_window.append(sentence)
-                current_length += len(sentence) + 1
+                current_length += self._length_in_tokens(sentence)
 
             if current_window:
                 windows.append(current_window)
@@ -757,15 +757,16 @@ class DataChunking:
                     topic_changed = float(similarity) < threshold
 
                     size_exceeded = (
-                        len(current_text)
-                        + len(next_sentence)
-                        + 1
+                        self._length_in_tokens(
+                            current_text + " " + next_sentence
+                        )
                         > self.chunk_size
                     )
 
                     if (
                         topic_changed
-                        and len(current_text) >= self.min_chunk_size
+                        and self._length_in_tokens(current_text)
+                        >= self.min_chunk_size
                     ) or size_exceeded:
                         groups.append(" ".join(current))
                         current = [next_sentence]
@@ -791,6 +792,55 @@ class DataChunking:
                     chunks,
                     "semantic",
                 )
+            )
+
+        return all_chunks
+
+    def hybrid_chunking(self):
+        """Use a retrieval-safe strategy based on the source file type."""
+        all_chunks = []
+        record_types = {"csv", "json", "xlsx", "xls"}
+
+        for doc in self.documents:
+            file_type = str(doc.metadata.get("file_type", "")).lower()
+            content_type = str(doc.metadata.get("content_type", "")).lower()
+
+            if file_type in record_types or content_type in {
+                "csv_record",
+                "json_object",
+                "json_value",
+                "spreadsheet_record",
+            }:
+                # Records are already atomic. Do not add overlap or merge
+                # unrelated rows/objects.
+                chunks = [doc.page_content.strip()]
+                strategy = "hybrid-record"
+
+            elif file_type == "sql" or content_type == "sql_statement":
+                # SQL loader creates one document per statement. Preserve it
+                # unless an unusually large statement needs a safe fallback.
+                chunks = self._pack_text([doc.page_content])
+                strategy = "hybrid-sql"
+
+            elif file_type in {"pdf", "docx", "txt"}:
+                sentences = self._get_sentences(doc.page_content)
+                chunks = self._pack_text(sentences)
+                chunks = self._apply_overlap(chunks)
+                strategy = "hybrid-prose"
+
+            else:
+                splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=self.chunk_size,
+                    chunk_overlap=self.chunk_overlap,
+                    length_function=self._length_in_tokens,
+                    separators=["\n\n", "\n", " ", ""],
+                )
+                chunks = splitter.split_text(doc.page_content)
+                strategy = "hybrid-fallback"
+
+            chunks = self._healthy_chunks(chunks)
+            all_chunks.extend(
+                self._create_documents(doc, chunks, strategy)
             )
 
         return all_chunks

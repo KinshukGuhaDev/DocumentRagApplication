@@ -10,7 +10,7 @@ IS_SINGLE_FILE = True
 SINGLE_FILE_PATH = "Datasets/pdf_files/01_the_future_of_vertical_forests.pdf"
 
 #Chunking Configurations
-CHUNKING_STRATEGY = "sentence-based" # Options: "sentence-based", "agentic", "recursive", "fixed-size", "semantic", "structured"
+CHUNKING_STRATEGY = "hybrid" # Automatically selects a file-type-aware strategy
 CHUNK_SIZE = None # Leave None to dynamically adjust chunk size based on the strategy
 SEMANTIC_THRESHOLDS = {
     "sentence-transformers": 0.65,
@@ -29,7 +29,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Vector Store Configurations
 VECTOR_DATABASE = "chromadb"
 VECTOR_STORE_PATH = "Database/vector_store"
-VECTOR_STORE_COLLECTION_NAME = "pdf_documents_cosine_v1"
+VECTOR_STORE_COLLECTION_NAME = "pdf_documents_cosine_v2"
 
 # Retrieval Configurations
 TOP_K = 3
