@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+import re
 import numpy as np
 from Classes.EmbeddingManager import EmbeddingManager
 from Classes.VectorStore import VectorStore
@@ -138,7 +139,9 @@ class RAGRetriever:
                 "Query embedding must be a one-dimensional vector"
             )
 
-        result_count = min(self.top_k, collection_count)
+        # Retrieve a larger semantic candidate pool before reranking. This
+        # improves recall for exact facts that dense similarity ranks lower.
+        result_count = min(max(self.top_k * 4, 12), collection_count)
         query_kwargs = {
             "query_embeddings": [query_embedding.tolist()],
             "n_results": result_count,
@@ -159,7 +162,7 @@ class RAGRetriever:
         distances = (results.get("distances") or [[]])[0]
         ids = (results.get("ids") or [[]])[0]
 
-        retrieved = []
+        candidates = []
         seen_ids = set()
 
         for rank, values in enumerate(
@@ -174,21 +177,73 @@ class RAGRetriever:
             seen_ids.add(document_id)
 
             distance = float(distance)
-            similarity_score = 1.0 - distance
+            similarity_score = max(-1.0, min(1.0, 1.0 - distance))
+            lexical_score = self._lexical_score(query, document)
+            rerank_score = (
+                0.70 * similarity_score
+                + 0.30 * lexical_score
+            )
 
-            if similarity_score < self.score_threshold:
-                continue
-
-            retrieved.append({
+            candidates.append({
                 "id": document_id,
                 "content": document,
                 "metadata": metadata or {},
                 "similarity_score": similarity_score,
+                "lexical_score": lexical_score,
+                "rerank_score": rerank_score,
                 "distance": distance,
-                "rank": rank,
+                "vector_rank": rank,
             })
 
+        candidates.sort(
+            key=lambda item: item["rerank_score"],
+            reverse=True,
+        )
+
+        retrieved = []
+        for rank, candidate in enumerate(
+            candidates[:self.top_k],
+            start=1,
+        ):
+            if candidate["rerank_score"] < self.score_threshold:
+                continue
+
+            candidate["rank"] = rank
+            retrieved.append(candidate)
+
         return retrieved
+
+    def _lexical_score(self, query: str, document: str) -> float:
+        stop_words = {
+            "a", "an", "and", "are", "as", "at", "be", "by", "for",
+            "from", "how", "in", "is", "it", "of", "on", "or", "that",
+            "the", "to", "was", "what", "when", "where", "which", "who",
+            "why", "with",
+        }
+
+        def words(text: str) -> List[str]:
+            return [
+                word
+                for word in re.findall(r"[a-z0-9]+", text.lower())
+                if word not in stop_words
+            ]
+
+        query_words = set(words(query))
+        document_words = set(words(document))
+
+        if not query_words:
+            return 0.0
+
+        overlap = len(query_words & document_words) / len(query_words)
+        normalized_query = " ".join(words(query))
+        normalized_document = " ".join(words(document))
+
+        phrase_bonus = 0.20 if (
+            normalized_query
+            and normalized_query in normalized_document
+        ) else 0.0
+
+        return min(1.0, overlap + phrase_bonus)
 
     def retrieve(self,question: str) -> Dict[str, Any]:
         question = question.strip()
