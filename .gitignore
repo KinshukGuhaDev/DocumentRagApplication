@@ -16,8 +16,9 @@ __pycache__/
 # Logs
 *.log
 
-# Dataset and generated files
+# Jupyter notebooks
 Notebooks/
+.Notebooks/
 
 # Vector databases and generated indexes
 Database/
