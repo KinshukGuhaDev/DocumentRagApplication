@@ -25,6 +25,8 @@ LLM_MODEL_NAME="gemini-3.5-flash-lite" # Options: "gemini-3.5-flash-lite", "gpt-
 LLM_MODEL_TEMPERATURE = 0                     
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+HF_HUB_DISABLE_SYMLINKS_WARNING=1
+HF_HUB_DISABLE_PROGRESS_BARS=1
 
 # Vector Store Configurations
 VECTOR_DATABASE = "chromadb"

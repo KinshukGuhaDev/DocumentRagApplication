@@ -48,23 +48,32 @@ class EmbeddingManager:
         self._load_model()
     
     def _load_model(self):
-        print("Embedding chunks...")
-        print("_" * 50)
-        print(f"🔄 Loading embedding model: {self.model_name}")
-
         if self.model_type == "sentence-transformers":
-            self.model = SentenceTransformer(self.model_name)
+            try:
+                self.model = SentenceTransformer(
+                    self.model_name,
+                    local_files_only=True,
+                )
+                print(
+                    f"✅ Loaded {self.model_name} from local cache."
+                )
+
+            except Exception:
+                print(
+                    f"⬇️ {self.model_name} is not cached. "
+                    "Downloading from Hugging Face..."
+                )
+
+                self.model = SentenceTransformer(
+                    self.model_name,
+                    local_files_only=False,
+                )
 
             self.embedding_dimension = (
                 self.model.get_embedding_dimension()
             )
 
             self.tokenizer = self.model.tokenizer
-
-            print(
-                f"✅ Loaded {self.model_name}. "
-                f"Embedding dimension: {self.embedding_dimension}"
-            )
 
         elif self.model_type == "openai":
             if not self.openai_api_key:
@@ -86,8 +95,6 @@ class EmbeddingManager:
                 self.tokenizer = tiktoken.get_encoding(
                     "cl100k_base"
                 )
-
-            print(f"✅ Loaded {self.model_name}")
 
     def _extract_text(self, item: TextInput) -> str:
         if isinstance(item, Document):
@@ -233,6 +240,12 @@ class EmbeddingManager:
         return embeddings
 
     def generate_embeddings(self, contents: List[TextInput]) -> np.ndarray:
+        print("Embedding chunks...")
+        print("_" * 50)
+        print(
+            f"✅ Loaded {self.model_name}. "
+            f"Embedding dimension: {self.embedding_dimension}"
+        )
         texts = self._extract_texts(contents)
 
         self._validate_input_lengths(texts)

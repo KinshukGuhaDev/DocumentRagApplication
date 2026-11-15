@@ -8,4 +8,3 @@ loaded_files = LoadFiles().load_files()
 chunks = DataChunking().split_documents_into_chunks(loaded_files)
 embeddings = EmbeddingManager().generate_embeddings(chunks)
 VectorStore().add_documents(chunks, embeddings)
-

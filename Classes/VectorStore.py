@@ -40,10 +40,7 @@ class VectorStore:
         self._initialize_chromadb()
 
     def _initialize_chromadb(self):
-        print("Vector Storing...")
-        print("_" * 50)
         Path(self.persist_directory).mkdir(parents=True, exist_ok=True)
-
         self.client = chromadb.PersistentClient(path=self.persist_directory)
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
@@ -54,10 +51,6 @@ class VectorStore:
                 "embedding_model_type": self.embedding_model_type,
             },
         )
-
-        print(f"✅ ChromaDB initialized with collection '{self.collection_name}'")
-        print(f"📁 Storage path: {self.persist_directory}")
-        print(f"📊 Existing records: {self.collection.count()}")
 
     @staticmethod
     def _metadata_value(value: Any) -> Any:
@@ -139,6 +132,11 @@ class VectorStore:
         embeddings: np.ndarray,
         batch_size: int = 256,
     ):
+        print("Vector Storing...")
+        print("_" * 50)
+        print(f"✅ ChromaDB initialized with collection '{self.collection_name}'")
+        print(f"📁 Storage path: {self.persist_directory}")
+        print(f"📊 Existing records: {self.collection.count()}")
         if not documents:
             raise ValueError("documents cannot be empty")
 
