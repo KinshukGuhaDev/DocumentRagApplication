@@ -1,191 +1,244 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1336.7219999999998 2065.369" width="1336.7219999999998" height="2065.369" style="--bg:#18181B;--fg:#F4F4F5;--line:#71717A;--muted:#A1A1AA;--surface:#27272A;--border:#3F3F46;background:var(--bg)">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
-  text { font-family: 'Inter', system-ui, sans-serif; }
-  svg {
-    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
-    --_text:          var(--fg);
-    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
-    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
-    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
-    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
-    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
-    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
-    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
-    --_group-fill:    var(--bg);
-    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
-    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
-    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
-  }
-</style>
-<defs>
-  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
-    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
-  </marker>
-  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
-    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
-  </marker>
-</defs>
-<g class="subgraph" data-id="Config" data-label="Configuration (config.py)">
-  <rect x="40" y="300.70000000000005" width="461.4929999999999" height="96.9" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <rect x="40" y="300.70000000000005" width="461.4929999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="52" y="314.70000000000005" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Configuration (config.py)</text>
-</g>
-<g class="subgraph" data-id="Stage1" data-label="1. Document Loading (LoadFiles.py)">
-  <rect x="529.4929999999999" y="40" width="385.16999999999996" height="351.6" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <rect x="529.4929999999999" y="40" width="385.16999999999996" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="541.4929999999999" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">1. Document Loading (LoadFiles.py)</text>
-</g>
-<g class="subgraph" data-id="Stage2" data-label="2. Data Chunking (DataChunking.py)">
-  <rect x="163.736" y="451.6" width="1132.9859999999999" height="736.569" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <rect x="163.736" y="451.6" width="1132.9859999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="175.736" y="465.6" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">2. Data Chunking (DataChunking.py)</text>
-</g>
-<g class="subgraph" data-id="Stage3" data-label="3. Embedding Generation (EmbeddingManager.py)">
-  <rect x="423.75449999999984" y="1248.1689999999999" width="391.0979999999999" height="436.5" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <rect x="423.75449999999984" y="1248.1689999999999" width="391.0979999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="435.75449999999984" y="1262.1689999999999" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">3. Embedding Generation (EmbeddingManager.py)</text>
-</g>
-<g class="subgraph" data-id="Stage4" data-label="4. Vector Persistence (VectorStore.py)">
-  <rect x="444.3152499999999" y="1744.6689999999999" width="596.6509999999998" height="280.70000000000005" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <rect x="444.3152499999999" y="1744.6689999999999" width="596.6509999999998" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="456.3152499999999" y="1758.6689999999999" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">4. Vector Persistence (VectorStore.py)</text>
-</g>
-<polyline class="edge" data-from="DOCS" data-to="DC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.078,378.6 722.0779999999997,495.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="CHUNKS" data-to="EM" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1172.169 722.0779999999999,1232.1689999999999 619.3034999999998,1232.1689999999999 619.3034999999998,1292.1689999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="CHUNKS" data-to="VS" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1172.169 722.0779999999999,1232.1689999999999 722.0779999999999,1232.1689999999999 722.0779999999999,1788.6689999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="VEC" data-to="VS" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="619.3034999999998,1668.6689999999999 619.3034999999998,1726.6689999999999 685.6933333333332,1726.6689999999999 685.6933333333332,1788.6689999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="SRC" data-to="LF" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.078,120.9 722.078,168.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="LF" data-to="LDR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.078,205.8 722.078,253.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="LDR" data-to="DOCS" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.078,290.70000000000005 722.078,341.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="DC" data-to="STRAT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,532.5 722.0779999999999,580.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="STRAT" data-to="HYB" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="hybrid" points="666.9472999999998,709.1383 666.9472999999998,776.269 295.55899999999997,776.269 295.55899999999997,880.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="STRAT" data-to="SEM" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="semantic" points="703.7010999999998,745.8920999999999 703.7010999999998,788.269 571.8774999999998,788.269 571.8774999999998,880.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="STRAT" data-to="AGT" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="agentic" points="740.4548999999998,745.8921 740.4548999999998,788.269 872.2784999999998,788.269 872.2784999999998,880.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="STRAT" data-to="OTH" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="sentence/structured/recursive" points="777.2086999999998,709.1383000000001 777.2086999999998,776.269 1160.4529999999997,776.269 1160.4529999999997,880.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="HYB" data-to="HEALTH" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="295.55899999999997,917.4689999999999 295.55899999999997,941.469 722.0779999999999,941.469 722.0779999999999,965.469" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="SEM" data-to="HEALTH" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="571.8774999999998,917.4689999999999 571.8774999999998,941.469 722.0779999999999,941.469 722.0779999999999,965.469" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="AGT" data-to="HEALTH" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="872.2784999999998,917.4689999999999 872.2784999999998,941.469 722.0779999999999,941.469 722.0779999999999,965.469" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="OTH" data-to="HEALTH" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1160.4529999999997,917.4689999999999 1160.4529999999997,941.469 722.0779999999999,941.469 722.0779999999999,965.469" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="HEALTH" data-to="OVERLAP" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1002.369 722.0779999999999,1050.3690000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="OVERLAP" data-to="CHUNKS" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1087.269 722.0779999999999,1135.269" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="EM" data-to="TOK" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="619.3034999999998,1329.069 619.3034999999998,1377.069" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="TOK" data-to="BATCH" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="619.3034999999998,1413.9689999999998 619.3034999999998,1461.9689999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="BATCH" data-to="NORM" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="619.3034999999998,1498.869 619.3034999999998,1546.869" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="NORM" data-to="VEC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="619.3034999999998,1583.7689999999998 619.3034999999998,1631.7689999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="VS" data-to="CHK" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1825.569 722.0779999999999,1849.569 573.9152499999998,1849.569 573.9152499999998,1873.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="VS" data-to="SAN" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="722.0779999999999,1825.569 722.0779999999999,1849.569 870.2407499999998,1849.569 870.2407499999998,1873.569" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<polyline class="edge" data-from="SAN" data-to="CHROMA" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="870.2407499999998,1910.4689999999998 870.2407499999998,1958.4689999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
-<g class="edge-label" data-from="STRAT" data-to="HYB" data-label="hybrid">
-  <rect x="271.05899999999997" y="807.269" width="48.538000000000004" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
-  <text x="295.328" y="822.419" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">hybrid</text>
-</g>
-<g class="edge-label" data-from="STRAT" data-to="SEM" data-label="semantic">
-  <rect x="541.8774999999998" y="807.269" width="59.23000000000001" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
-  <text x="571.4924999999998" y="822.419" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">semantic</text>
-</g>
-<g class="edge-label" data-from="STRAT" data-to="AGT" data-label="agentic">
-  <rect x="845.7784999999998" y="807.269" width="52.102000000000004" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
-  <text x="871.8294999999998" y="822.419" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">agentic</text>
-</g>
-<g class="edge-label" data-from="STRAT" data-to="OTH" data-label="sentence/structured/recursive">
-  <rect x="1077.9529999999997" y="807.269" width="164.96200000000005" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
-  <text x="1160.4339999999997" y="822.419" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">sentence/structured/recursive</text>
-</g>
-<g class="node" data-id="CFG" data-label="File types, Chunking strategy, Embedding models, ChromaDB paths" data-shape="rectangle">
-  <rect x="56" y="341.70000000000005" width="429.4929999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="270.74649999999997" y="360.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">File types, Chunking strategy, Embedding models, ChromaDB paths</text>
-</g>
-<g class="node" data-id="SRC" data-label="Raw Files (PDF, DOCX, TXT, CSV, JSON, XLSX, SQL)" data-shape="rectangle">
-  <rect x="545.4929999999999" y="84" width="353.16999999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.078" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Raw Files (PDF, DOCX, TXT, CSV, JSON, XLSX, SQL)</text>
-</g>
-<g class="node" data-id="LF" data-label="LoadFiles.load_files()" data-shape="rectangle">
-  <rect x="637.377" y="168.9" width="169.402" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.078" y="187.35000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">LoadFiles.load_files()</text>
-</g>
-<g class="node" data-id="LDR" data-label="Format-Specific Parsers &amp; Loaders" data-shape="rectangle">
-  <rect x="596.622" y="253.8" width="250.912" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.078" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Format-Specific Parsers &amp; Loaders</text>
-</g>
-<g class="node" data-id="DOCS" data-label="LangChain Document objects + Source Metadata" data-shape="rectangle">
-  <rect x="559.5719999999999" y="341.70000000000005" width="325.01199999999994" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="360.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">LangChain Document objects + Source Metadata</text>
-</g>
-<g class="node" data-id="DC" data-label="DataChunking.split_documents_into_chunks()" data-shape="rectangle">
-  <rect x="566.9819999999999" y="495.6" width="310.19199999999995" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="514.0500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">DataChunking.split_documents_into_chunks()</text>
-</g>
-<g class="node" data-id="STRAT" data-label="Strategy Dispatcher" data-shape="diamond">
-  <polygon points="722.0779999999999,580.5 813.9624999999999,672.3845 722.0779999999999,764.269 630.1934999999999,672.3845" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="672.3845" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Strategy Dispatcher</text>
-</g>
-<g class="node" data-id="HYB" data-label="Hybrid (Record vs Prose aware)" data-shape="rectangle">
-  <rect x="179.736" y="880.569" width="231.64600000000002" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="295.55899999999997" y="899.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Hybrid (Record vs Prose aware)</text>
-</g>
-<g class="node" data-id="SEM" data-label="Semantic (Cosine similarity transitions)" data-shape="rectangle">
-  <rect x="439.38199999999995" y="880.569" width="264.9909999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="571.8774999999998" y="899.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Semantic (Cosine similarity transitions)</text>
-</g>
-<g class="node" data-id="AGT" data-label="Agentic (LLM Topic Boundary Detection)" data-shape="rectangle">
-  <rect x="732.3729999999998" y="880.569" width="279.8109999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="872.2784999999998" y="899.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Agentic (LLM Topic Boundary Detection)</text>
-</g>
-<g class="node" data-id="OTH" data-label="Sentence / Structured / Recursive" data-shape="rectangle">
-  <rect x="1040.1839999999997" y="880.569" width="240.53799999999998" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="1160.4529999999997" y="899.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Sentence / Structured / Recursive</text>
-</g>
-<g class="node" data-id="HEALTH" data-label="_healthy_chunks() (Merge under-sized chunks)" data-shape="rectangle">
-  <rect x="561.4244999999999" y="965.469" width="321.30699999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="983.9190000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">_healthy_chunks() (Merge under-sized chunks)</text>
-</g>
-<g class="node" data-id="OVERLAP" data-label="_apply_overlap() (15% token-safe overlap)" data-shape="rectangle">
-  <rect x="580.3199999999998" y="1050.3690000000001" width="283.51599999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999997" y="1068.8190000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">_apply_overlap() (15% token-safe overlap)</text>
-</g>
-<g class="node" data-id="CHUNKS" data-label="Enriched Chunks (Chunk ID, Tokens, Offsets)" data-shape="rectangle">
-  <rect x="570.3164999999999" y="1135.269" width="303.5229999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="1153.719" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Enriched Chunks (Chunk ID, Tokens, Offsets)</text>
-</g>
-<g class="node" data-id="EM" data-label="EmbeddingManager.generate_embeddings()" data-shape="rectangle">
-  <rect x="467.5419999999998" y="1292.1689999999999" width="303.52299999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="619.3034999999998" y="1310.619" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">EmbeddingManager.generate_embeddings()</text>
-</g>
-<g class="node" data-id="TOK" data-label="Token length validation (tiktoken / HF)" data-shape="rectangle">
-  <rect x="490.1424999999998" y="1377.069" width="258.32199999999995" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="619.3034999999998" y="1395.519" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Token length validation (tiktoken / HF)</text>
-</g>
-<g class="node" data-id="BATCH" data-label="Batched Encoding (SentenceTransformers or OpenAI)" data-shape="rectangle">
-  <rect x="439.75449999999984" y="1461.9689999999998" width="359.0979999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="619.3034999999998" y="1480.4189999999999" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Batched Encoding (SentenceTransformers or OpenAI)</text>
-</g>
-<g class="node" data-id="NORM" data-label="L2 Normalization &amp; Finite-value validation" data-shape="rectangle">
-  <rect x="479.3979999999998" y="1546.869" width="279.8109999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="619.3034999999998" y="1565.319" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">L2 Normalization &amp; Finite-value validation</text>
-</g>
-<g class="node" data-id="VEC" data-label="Numpy Vector Matrix (N, D)" data-shape="rectangle">
-  <rect x="520.8939999999998" y="1631.7689999999998" width="196.819" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="619.3034999999998" y="1650.2189999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Numpy Vector Matrix (N, D)</text>
-</g>
-<g class="node" data-id="VS" data-label="VectorStore.add_documents()" data-shape="rectangle">
-  <rect x="612.9239999999999" y="1788.6689999999999" width="218.308" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="722.0779999999999" y="1807.119" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">VectorStore.add_documents()</text>
-</g>
-<g class="node" data-id="CHK" data-label="Embedding dimension validation" data-shape="rectangle">
-  <rect x="460.3152499999999" y="1873.569" width="227.19999999999993" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="573.9152499999998" y="1892.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Embedding dimension validation</text>
-</g>
-<g class="node" data-id="SAN" data-label="Metadata sanitization &amp; SHA-256 ID generation" data-shape="rectangle">
-  <rect x="715.5152499999998" y="1873.569" width="309.45099999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="870.2407499999998" y="1892.019" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Metadata sanitization &amp; SHA-256 ID generation</text>
-</g>
-<g class="node" data-id="CHROMA" data-label="ChromaDB Persistent Store (HNSW Cosine)" data-shape="cylinder">
-  <rect x="722.9252499999998" y="1965.4689999999998" width="294.631" height="36.900000000000006" fill="var(--_node-fill)" stroke="none" />
-  <line x1="722.9252499999998" y1="1965.4689999999998" x2="722.9252499999998" y2="2002.369" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <line x1="1017.5562499999997" y1="1965.4689999999998" x2="1017.5562499999997" y2="2002.369" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <ellipse cx="870.2407499999997" cy="2002.369" rx="147.3155" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <ellipse cx="870.2407499999997" cy="1965.4689999999998" rx="147.3155" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
-  <text x="870.2407499999997" y="1983.9189999999999" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">ChromaDB Persistent Store (HNSW Cosine)</text>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" width="100%" height="100%" style="background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="header-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Markers -->
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <style>
+    .flow-stream {
+      stroke: #34d399;
+      stroke-width: 2.2;
+      stroke-dasharray: 6 5;
+      animation: dashFlow 1.6s linear infinite;
+      fill: none;
+    }
+    .flow-substream {
+      stroke: #38bdf8;
+      stroke-width: 1.8;
+      stroke-dasharray: 5 4;
+      animation: dashFlow 1.8s linear infinite;
+      fill: none;
+    }
+    @keyframes dashFlow {
+      from { stroke-dashoffset: 22; }
+      to { stroke-dashoffset: 0; }
+    }
+    .tag-box {
+      font-size: 10px;
+      font-weight: 600;
+      fill: #e2e8f0;
+    }
+  </style>
+
+  <!-- Banner Header -->
+  <rect x="30" y="20" width="1140" height="60" rx="10" fill="url(#header-grad)" />
+  <text x="55" y="46" fill="#ffffff" font-size="20" font-weight="700">Deep Dive: Multi-Format Document Ingestion Pipeline</text>
+  <text x="55" y="65" fill="#e0f2fe" font-size="12">LoadFiles.py ➔ DataChunking.py ➔ EmbeddingManager.py ➔ VectorStore.py (ChromaDB)</text>
+  
+  <!-- STAGE 1: DOCUMENT LOADING & EXTRACTION -->
+  <g transform="translate(30, 100)">
+    <rect width="255" height="690" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="255" height="38" rx="10" fill="#132e27" />
+    <text x="18" y="24" fill="#34d399" font-size="13" font-weight="700">1. MULTI-FORMAT LOADING</text>
+
+    <!-- Source files box -->
+    <rect x="15" y="55" width="225" height="230" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#38bdf8" font-size="12" font-weight="700">Specialized Extractors</text>
+
+    <!-- PDF -->
+    <rect x="25" y="90" width="205" height="30" rx="5" fill="#334155" />
+    <text x="35" y="110" fill="#f8fafc" font-size="11" font-weight="600">📄 PDF:</text>
+    <text x="80" y="110" fill="#94a3b8" font-size="10.5">PyMuPDFLoader (per page)</text>
+
+    <!-- DOCX / TXT -->
+    <rect x="25" y="125" width="205" height="30" rx="5" fill="#334155" />
+    <text x="35" y="145" fill="#f8fafc" font-size="11" font-weight="600">📝 DOCX/TXT:</text>
+    <text x="115" y="145" fill="#94a3b8" font-size="10.5">Docx2txt, UTF-8 Text</text>
+
+    <!-- CSV / Excel -->
+    <rect x="25" y="160" width="205" height="30" rx="5" fill="#334155" />
+    <text x="35" y="180" fill="#f8fafc" font-size="11" font-weight="600">📊 CSV / XLSX:</text>
+    <text x="115" y="180" fill="#94a3b8" font-size="10.5">DictReader, openpyxl</text>
+
+    <!-- JSON / SQL -->
+    <rect x="25" y="195" width="205" height="30" rx="5" fill="#334155" />
+    <text x="35" y="215" fill="#f8fafc" font-size="11" font-weight="600">🗄️ JSON / SQL:</text>
+    <text x="115" y="215" fill="#94a3b8" font-size="10.5">Recursive visit, ; split</text>
+
+    <text x="25" y="245" fill="#94a3b8" font-size="10">• Auto extension validation</text>
+    <text x="25" y="260" fill="#94a3b8" font-size="10">• Directory or single-file scan</text>
+    <text x="25" y="275" fill="#94a3b8" font-size="10">• Graceful error tolerance</text>
+
+    <!-- Metadata Enrichment Box -->
+    <rect x="15" y="305" width="225" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="328" fill="#38bdf8" font-size="12" font-weight="700">Metadata &amp; Provenance</text>
+    <text x="25" y="350" fill="#f1f5f9" font-size="11">Each Document stamped with:</text>
+    <text x="25" y="372" fill="#a7f3d0" font-size="10.5">✓ source_file (e.g. report.pdf)</text>
+    <text x="25" y="390" fill="#a7f3d0" font-size="10.5">✓ source_path (canonical abs path)</text>
+    <text x="25" y="408" fill="#a7f3d0" font-size="10.5">✓ file_type &amp; content_type</text>
+    <text x="25" y="426" fill="#a7f3d0" font-size="10.5">✓ document_id = SHA256(path)</text>
+    <text x="25" y="444" fill="#a7f3d0" font-size="10.5">✓ row_number / sheet / page</text>
+
+    <!-- Raw output note -->
+    <rect x="15" y="475" width="225" height="195" rx="8" fill="#132438" stroke="#1d4ed8" stroke-width="1" />
+    <text x="25" y="498" fill="#60a5fa" font-size="11.5" font-weight="700">Document Stream</text>
+    <text x="25" y="520" fill="#cbd5e1" font-size="10.5">Emits standard LangChain</text>
+    <text x="25" y="536" fill="#cbd5e1" font-size="10.5">Document objects containing</text>
+    <text x="25" y="552" fill="#cbd5e1" font-size="10.5">clean extracted text ready</text>
+    <text x="25" y="568" fill="#cbd5e1" font-size="10.5">for structural chunking.</text>
+    <rect x="25" y="590" width="205" height="65" rx="5" fill="#0f172a" />
+    <text x="35" y="612" fill="#38bdf8" font-size="10">PageContent: "..."</text>
+    <text x="35" y="628" fill="#94a3b8" font-size="9.5">Metadata: {source, page,</text>
+    <text x="35" y="642" fill="#94a3b8" font-size="9.5">document_id, file_type}</text>
+  </g>
+
+  <!-- STAGE 2: DATA CHUNKING -->
+  <g transform="translate(315, 100)">
+    <rect width="320" height="690" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="320" height="38" rx="10" fill="#162e3b" />
+    <text x="18" y="24" fill="#38bdf8" font-size="13" font-weight="700">2. INTELLIGENT CHUNKING ENGINE</text>
+
+    <!-- Strategies Container -->
+    <rect x="15" y="55" width="290" height="305" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#34d399" font-size="12" font-weight="700">7 Chunking Strategies</text>
+
+    <!-- Hybrid (Recommended) -->
+    <rect x="22" y="90" width="276" height="52" rx="6" fill="#064e3b" stroke="#059669" stroke-width="1" />
+    <text x="32" y="108" fill="#6ee7b7" font-size="11" font-weight="700">★ HYBRID (Default &amp; File-Type Aware)</text>
+    <text x="32" y="123" fill="#a7f3d0" font-size="10">• CSV/JSON/Excel ➔ Atomic rows (No split)</text>
+    <text x="32" y="136" fill="#a7f3d0" font-size="10">• PDF/DOCX/TXT ➔ Sentence packing + overlap</text>
+
+    <!-- Semantic -->
+    <rect x="22" y="148" width="276" height="38" rx="6" fill="#334155" />
+    <text x="32" y="165" fill="#f8fafc" font-size="10.5" font-weight="600">🧠 Semantic:</text>
+    <text x="100" y="165" fill="#cbd5e1" font-size="10">Cosine similarity drops between</text>
+    <text x="32" y="179" fill="#94a3b8" font-size="9.5">adjacent sentences trigger topic cuts</text>
+
+    <!-- Agentic -->
+    <rect x="22" y="192" width="276" height="38" rx="6" fill="#334155" />
+    <text x="32" y="209" fill="#f8fafc" font-size="10.5" font-weight="600">🤖 Agentic:</text>
+    <text x="95" y="209" fill="#cbd5e1" font-size="10">LLM structured TopicBoundaries</text>
+    <text x="32" y="223" fill="#94a3b8" font-size="9.5">detection with SHA-256 prompt caching</text>
+
+    <!-- Sentence-based -->
+    <rect x="22" y="236" width="276" height="34" rx="6" fill="#334155" />
+    <text x="32" y="252" fill="#f8fafc" font-size="10.5" font-weight="600">✍️ Sentence-based:</text>
+    <text x="145" y="252" fill="#cbd5e1" font-size="10">spaCy en_core_web_sm</text>
+    <text x="32" y="264" fill="#94a3b8" font-size="9.5">pack into token windows</text>
+
+    <!-- Structured, Recursive, Fixed -->
+    <rect x="22" y="276" width="276" height="34" rx="6" fill="#334155" />
+    <text x="32" y="292" fill="#f8fafc" font-size="10" font-weight="600">📐 Structured:</text>
+    <text x="105" y="292" fill="#cbd5e1" font-size="9.5">Headings (#, Chapter, Section)</text>
+    <text x="32" y="304" fill="#94a3b8" font-size="9.5">Recursive &amp; Fixed-size splitters</text>
+
+    <text x="25" y="332" fill="#94a3b8" font-size="10.5">Token measurement via <tspan fill="#38bdf8">tiktoken (cl100k_base)</tspan></text>
+    <text x="25" y="348" fill="#94a3b8" font-size="10">Default size: 220 tokens | Min chunk: 44 tokens</text>
+
+    <!-- Chunk Quality Controls -->
+    <rect x="15" y="375" width="290" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="398" fill="#f59e0b" font-size="12" font-weight="700">Chunk Quality &amp; Overlap Guardrails</text>
+
+    <text x="25" y="420" fill="#f1f5f9" font-size="11" font-weight="600">_healthy_chunks() Anti-Orphan:</text>
+    <text x="25" y="436" fill="#94a3b8" font-size="10">• Chunks &lt; 20% chunk_size automatically merged</text>
+    <text x="25" y="450" fill="#94a3b8" font-size="10">  into previous chunk if under capacity limit.</text>
+
+    <text x="25" y="475" fill="#f1f5f9" font-size="11" font-weight="600">_apply_overlap() Context Retention:</text>
+    <text x="25" y="492" fill="#94a3b8" font-size="10">• Backward whole-word sliding overlap (15%)</text>
+    <text x="25" y="506" fill="#94a3b8" font-size="10">• Ensures cross-boundary semantic continuity</text>
+
+    <!-- Chunk Metadata Box -->
+    <rect x="15" y="540" width="290" height="130" rx="8" fill="#132e27" stroke="#10b981" stroke-width="1" />
+    <text x="25" y="563" fill="#34d399" font-size="12" font-weight="700">Enriched Chunk Output</text>
+    <text x="25" y="583" fill="#a7f3d0" font-size="10.5">chunk_id: SHA256(source|page|strategy|text)</text>
+    <text x="25" y="601" fill="#a7f3d0" font-size="10.5">chunk_index: sequential position in doc</text>
+    <text x="25" y="619" fill="#a7f3d0" font-size="10.5">chunk_strategy: hybrid-record / hybrid-prose</text>
+    <text x="25" y="637" fill="#a7f3d0" font-size="10.5">token_count &amp; content_length validated</text>
+    <text x="25" y="655" fill="#6ee7b7" font-size="10.5">✓ Ready for high-fidelity vector embedding</text>
+  </g>
+
+  <!-- STAGE 3: EMBEDDING & VECTOR STORAGE -->
+  <g transform="translate(665, 100)">
+    <rect width="505" height="690" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="505" height="38" rx="10" fill="#291a45" />
+    <text x="18" y="24" fill="#c084fc" font-size="13" font-weight="700">3. EMBEDDING GENERATION &amp; CHROMADB PERSISTENCE</text>
+
+    <!-- Embedding Manager -->
+    <rect x="15" y="55" width="475" height="235" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#a855f7" font-size="12" font-weight="700">EmbeddingManager.py — Dual Provider Vector Engine</text>
+
+    <!-- Model Types -->
+    <g transform="translate(25, 90)">
+      <rect width="220" height="60" rx="6" fill="#334155" />
+      <text x="12" y="22" fill="#f8fafc" font-size="11" font-weight="700">Sentence-Transformers</text>
+      <text x="12" y="38" fill="#38bdf8" font-size="10">all-MiniLM-L6-v2 (Local)</text>
+      <text x="12" y="52" fill="#94a3b8" font-size="9.5">Dim: 384 • Offline • Fast GPU/CPU</text>
+
+      <rect x="235" y="0" width="220" height="60" rx="6" fill="#334155" />
+      <text x="247" y="22" fill="#f8fafc" font-size="11" font-weight="700">OpenAI Embeddings</text>
+      <text x="247" y="38" fill="#38bdf8" font-size="10">text-embedding-3-small</text>
+      <text x="247" y="52" fill="#94a3b8" font-size="9.5">Dim: 1536 • Cloud API • High capacity</text>
+    </g>
+
+    <!-- Validation safeguards -->
+    <text x="25" y="175" fill="#f1f5f9" font-size="11" font-weight="600">Pre-Embedding Safeguards:</text>
+    <text x="25" y="195" fill="#cbd5e1" font-size="10">• _validate_input_lengths(): Checks chunk tokens against model sequence ceiling (e.g. 512)</text>
+    <text x="25" y="212" fill="#cbd5e1" font-size="10">• Batch processing (batch_size=32) with tqdm progress bars</text>
+    <text x="25" y="230" fill="#cbd5e1" font-size="10">• L2 Normalization: Vectors normalized to unit sphere (Cosine Sim = Dot Product)</text>
+    <text x="25" y="248" fill="#cbd5e1" font-size="10">• _validate_embeddings(): Asserts 2D matrix shape, checks for zero dimension or NaN values</text>
+    <text x="25" y="266" fill="#34d399" font-size="10" font-weight="600">✓ Emits float32 vector matrix [N, D] aligned with document chunks</text>
+
+    <!-- Vector Store Box -->
+    <rect x="15" y="305" width="475" height="365" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.2" />
+    <text x="25" y="328" fill="#f59e0b" font-size="12" font-weight="700">VectorStore.py — ChromaDB Persistent Storage</text>
+
+    <g transform="translate(25, 345)">
+      <!-- DB Specs -->
+      <rect width="455" height="75" rx="6" fill="#141d2e" stroke="#334155" stroke-width="1" />
+      <text x="15" y="22" fill="#f8fafc" font-size="11" font-weight="600">Collection: VECTOR_STORE_COLLECTION_NAME ("pdf_documents_cosine_v2")</text>
+      <text x="15" y="39" fill="#94a3b8" font-size="10">Space: "hnsw:space": "cosine" • Disk Path: Database/vector_store</text>
+      <text x="15" y="56" fill="#38bdf8" font-size="10">Client: chromadb.PersistentClient (automatic SQLite + index files)</text>
+
+      <!-- Dimension Safety Guardrail -->
+      <rect y="88" width="455" height="75" rx="6" fill="#451a03" stroke="#b45309" stroke-width="1" />
+      <text x="15" y="108" fill="#fef3c7" font-size="11" font-weight="700">🛡️ Dimension Guardrail (_existing_dimension)</text>
+      <text x="15" y="125" fill="#fed7aa" font-size="10">Inspects stored vector dimension vs new vectors. Throws explicit error</text>
+      <text x="15" y="140" fill="#fed7aa" font-size="10">if switching models (e.g. 384 != 1536), preventing database corruption.</text>
+
+      <!-- Idempotent Upsert -->
+      <rect y="176" width="455" height="75" rx="6" fill="#064e3b" stroke="#059669" stroke-width="1" />
+      <text x="15" y="196" fill="#a7f3d0" font-size="11" font-weight="700">🔄 Idempotent Upsert Logic</text>
+      <text x="15" y="213" fill="#d1fae5" font-size="10">ID = SHA256(source_file | page | chunk_index | page_content)</text>
+      <text x="15" y="228" fill="#d1fae5" font-size="10">Re-running ingestion updates existing IDs safely without duplicate entries.</text>
+
+      <!-- Metadata Cleaning -->
+      <rect y="264" width="455" height="48" rx="6" fill="#334155" />
+      <text x="15" y="284" fill="#f8fafc" font-size="10.5" font-weight="600">_clean_metadata():</text>
+      <text x="135" y="284" fill="#94a3b8" font-size="10">Flattens nested dicts/lists to string/int primitives</text>
+      <text x="15" y="299" fill="#94a3b8" font-size="9.5">Guarantees 100% compliance with ChromaDB metadata typing requirements.</text>
+    </g>
+  </g>
+
+  <!-- Connectors between stages -->
+  <path d="M 285 440 L 315 440" class="flow-stream" marker-end="url(#arrow-green)" />
+  <path d="M 635 440 L 665 440" class="flow-stream" marker-end="url(#arrow-green)" />
+
 </svg>

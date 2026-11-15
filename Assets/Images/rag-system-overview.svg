@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%" style="background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="primary-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="ingest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="retrieval-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="db-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Filters for Glow Effects -->
+    <filter id="glow-ingest" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="glow-retrieval" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="glow-db" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrow-ingest" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-retrieval" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#a855f7" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <style>
+    .flow-line-ingest {
+      stroke: #10b981;
+      stroke-width: 2.5;
+      stroke-dasharray: 8 6;
+      animation: flowIngest 1.5s linear infinite;
+      fill: none;
+    }
+    .flow-line-retrieval {
+      stroke: #c084fc;
+      stroke-width: 2.5;
+      stroke-dasharray: 8 6;
+      animation: flowRetrieval 1.5s linear infinite;
+      fill: none;
+    }
+    .pulse-glow {
+      animation: pulseGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes flowIngest {
+      from { stroke-dashoffset: 28; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes flowRetrieval {
+      from { stroke-dashoffset: 28; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.85; }
+    }
+  </style>
+
+  <!-- Title & Subtitle -->
+  <rect x="25" y="18" width="1150" height="58" rx="8" fill="#131d31" stroke="#1e293b" stroke-width="1" />
+  <text x="50" y="44" fill="#f8fafc" font-size="20" font-weight="700">Document RAG Application — End-to-End System Architecture</text>
+  <text x="50" y="62" fill="#94a3b8" font-size="12">Multi-Format Ingestion • Dynamic Chunking • Dense+Lexical Hybrid Reranking • Grounded Multi-LLM Synthesis</text>
+  <circle cx="1130" cy="47" r="7" fill="#10b981" class="pulse-glow" filter="url(#glow-ingest)" />
+  <text x="1070" y="51" fill="#10b981" font-size="11" font-weight="600">LIVE RAG FLOW</text>
+
+  <!-- Left Container: Ingestion Pipeline -->
+  <rect x="25" y="90" width="460" height="565" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="1.2" stroke-opacity="0.5" />
+  <rect x="25" y="90" width="460" height="38" rx="12" fill="#132e27" />
+  <text x="45" y="114" fill="#34d399" font-size="14" font-weight="700">1. DOCUMENT INGESTION PIPELINE</text>
+  <text x="350" y="114" fill="#6ee7b7" font-size="11">injestion_pipeline.py</text>
+
+  <!-- Step 1.1: File Loaders -->
+  <g transform="translate(45, 145)">
+    <rect width="420" height="75" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="12" width="50" height="50" rx="6" fill="#065f46" />
+    <text x="37" y="42" fill="#34d399" font-size="18" font-weight="700" text-anchor="middle">FILES</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Multi-Format Loaders (LoadFiles)</text>
+    <text x="75" y="50" fill="#94a3b8" font-size="11">PDF, DOCX, TXT, CSV, JSON, XLSX, SQL</text>
+    <text x="75" y="65" fill="#64748b" font-size="10">Auto-extracted metadata • SHA-256 Provenance IDs</text>
+  </g>
+
+  <!-- Step 1.2: Dynamic Chunking -->
+  <g transform="translate(45, 255)">
+    <rect width="420" height="105" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="16" width="50" height="72" rx="6" fill="#0f766e" />
+    <text x="37" y="58" fill="#2dd4bf" font-size="16" font-weight="700" text-anchor="middle">CHUNK</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Dynamic Chunking Engine (DataChunking)</text>
+    <text x="75" y="50" fill="#38bdf8" font-size="11">7 Strategies: Hybrid • Semantic • Agentic • Sentence • Structured</text>
+    <text x="75" y="68" fill="#94a3b8" font-size="10.5">• Atomic rows for CSV/JSON/Excel • Sentence packing for prose</text>
+    <text x="75" y="84" fill="#64748b" font-size="10">• _healthy_chunks() anti-fragmentation • 15% sliding overlap</text>
+  </g>
+
+  <!-- Step 1.3: Embedding Manager -->
+  <g transform="translate(45, 395)">
+    <rect width="420" height="85" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="14" width="50" height="56" rx="6" fill="#047857" />
+    <text x="37" y="48" fill="#6ee7b7" font-size="15" font-weight="700" text-anchor="middle">EMBED</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Vector Embeddings (EmbeddingManager)</text>
+    <text x="75" y="50" fill="#94a3b8" font-size="11">HuggingFace (all-MiniLM-L6-v2) or OpenAI</text>
+    <text x="75" y="68" fill="#64748b" font-size="10">Batching (32) • L2 Vector Normalization • Token Limits Check</text>
+  </g>
+
+  <!-- Step 1.4: Vector Storage Ingestion -->
+  <g transform="translate(45, 515)">
+    <rect width="420" height="80" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+    <rect x="12" y="14" width="50" height="52" rx="6" fill="#064e3b" />
+    <text x="37" y="46" fill="#34d399" font-size="15" font-weight="700" text-anchor="middle">UPSERT</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">ChromaDB Ingestion (VectorStore)</text>
+    <text x="75" y="50" fill="#94a3b8" font-size="11">Idempotent Upsert by SHA-256 chunk hash</text>
+    <text x="75" y="66" fill="#64748b" font-size="10">Dimension Mismatch Guardrail • Metadata Flattening</text>
+  </g>
+
+  <!-- Connectors within Ingestion -->
+  <path d="M 255 220 L 255 255" class="flow-line-ingest" marker-end="url(#arrow-ingest)" />
+  <path d="M 255 360 L 255 395" class="flow-line-ingest" marker-end="url(#arrow-ingest)" />
+  <path d="M 255 480 L 255 515" class="flow-line-ingest" marker-end="url(#arrow-ingest)" />
+
+  <!-- Center Hub: ChromaDB Vector Store -->
+  <g transform="translate(515, 270)">
+    <!-- Outer Glow -->
+    <rect width="170" height="180" rx="16" fill="#182234" stroke="#f59e0b" stroke-width="1.8" filter="url(#glow-db)" />
+    <!-- DB Cylinder Design -->
+    <ellipse cx="85" cy="40" rx="60" ry="18" fill="#d97706" />
+    <rect x="25" y="40" width="120" height="50" fill="#b45309" />
+    <ellipse cx="85" cy="90" rx="60" ry="18" fill="#d97706" />
+    <rect x="25" y="90" width="120" height="50" fill="#92400e" />
+    <ellipse cx="85" cy="140" rx="60" ry="18" fill="#d97706" />
+    
+    <text x="85" y="44" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">ChromaDB</text>
+    <text x="85" y="94" fill="#fef3c7" font-size="11" font-weight="600" text-anchor="middle">HNSW Cosine</text>
+    <text x="85" y="130" fill="#fef3c7" font-size="10" text-anchor="middle">Indexed Chunks &amp;</text>
+    <text x="85" y="145" fill="#fde68a" font-size="9.5" text-anchor="middle">Embeddings</text>
+    <text x="85" y="170" fill="#94a3b8" font-size="9" text-anchor="middle">Persistent on Disk</text>
+  </g>
+
+  <!-- Ingestion Pipe to DB -->
+  <path d="M 465 555 L 530 555 L 530 460 L 590 460" class="flow-line-ingest" marker-end="url(#arrow-ingest)" />
+
+  <!-- Right Container: Retrieval & Generation Pipeline -->
+  <rect x="715" y="90" width="460" height="565" rx="12" fill="#0f172a" stroke="#a855f7" stroke-width="1.2" stroke-opacity="0.5" />
+  <rect x="715" y="90" width="460" height="38" rx="12" fill="#291a45" />
+  <text x="735" y="114" fill="#c084fc" font-size="14" font-weight="700">2. RETRIEVAL &amp; SYNTHESIS PIPELINE</text>
+  <text x="1035" y="114" fill="#e9d5ff" font-size="11">retrieval_pipeline.py</text>
+
+  <!-- Step 2.1: User Query -->
+  <g transform="translate(735, 145)">
+    <rect width="420" height="75" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="12" width="50" height="50" rx="6" fill="#581c87" />
+    <text x="37" y="42" fill="#d8b4fe" font-size="18" font-weight="700" text-anchor="middle">USER</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">User Question Input</text>
+    <text x="75" y="50" fill="#94a3b8" font-size="11">Natural language query string</text>
+    <text x="75" y="65" fill="#64748b" font-size="10">Validated &amp; encoded via query vectorizer</text>
+  </g>
+
+  <!-- Step 2.2: Vector Retrieval & Oversampling -->
+  <g transform="translate(735, 255)">
+    <rect width="420" height="75" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="12" width="50" height="50" rx="6" fill="#6b21a8" />
+    <text x="37" y="42" fill="#e9d5ff" font-size="15" font-weight="700" text-anchor="middle">POOL</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Candidate Retrieval &amp; Oversampling</text>
+    <text x="75" y="50" fill="#94a3b8" font-size="11">Pre-fetches Top-K * 4 (min 12) candidate chunks</text>
+    <text x="75" y="65" fill="#64748b" font-size="10">High recall pool preventing missing key facts</text>
+  </g>
+
+  <!-- Connection from DB to Retrieval Pool -->
+  <path d="M 685 360 L 735 292" class="flow-line-retrieval" marker-end="url(#arrow-retrieval)" />
+
+  <!-- Step 2.3: Hybrid Dense + Lexical Reranker -->
+  <g transform="translate(735, 360)">
+    <rect width="420" height="85" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.2" />
+    <rect x="12" y="14" width="50" height="56" rx="6" fill="#701a75" />
+    <text x="37" y="48" fill="#f472b6" font-size="14" font-weight="700" text-anchor="middle">RANK</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Hybrid Reranker (70% Dense + 30% Lexical)</text>
+    <text x="75" y="50" fill="#f472b6" font-size="11">Score = (0.70 × Cosine Similarity) + (0.30 × Word Overlap)</text>
+    <text x="75" y="68" fill="#94a3b8" font-size="10.5">Bonus for exact phrases • Filters by SCORE_THRESHOLD</text>
+  </g>
+
+  <!-- Step 2.4: Multi-LLM Synthesis & Source Citations -->
+  <g transform="translate(735, 475)">
+    <rect width="420" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <rect x="12" y="18" width="50" height="84" rx="6" fill="#4c1d95" />
+    <text x="37" y="65" fill="#c084fc" font-size="15" font-weight="700" text-anchor="middle">LLM</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Grounded LLM Synthesis (Gemini / OpenAI)</text>
+    <text x="75" y="50" fill="#38bdf8" font-size="11">Strict anti-hallucination prompt ("Only use provided context")</text>
+    <text x="75" y="68" fill="#94a3b8" font-size="10.5">Automated source &amp; page number attribution ([Source 1]...)</text>
+    <text x="75" y="86" fill="#10b981" font-size="10.5" font-weight="600">✓ Structured JSON Output (question, answer, sources, history)</text>
+    <text x="75" y="103" fill="#64748b" font-size="10">Conversation memory tracking for conversational follow-ups</text>
+  </g>
+
+  <!-- Connectors within Retrieval -->
+  <path d="M 945 220 L 945 255" class="flow-line-retrieval" marker-end="url(#arrow-retrieval)" />
+  <path d="M 945 330 L 945 360" class="flow-line-retrieval" marker-end="url(#arrow-retrieval)" />
+  <path d="M 945 445 L 945 475" class="flow-line-retrieval" marker-end="url(#arrow-retrieval)" />
+
+</svg>

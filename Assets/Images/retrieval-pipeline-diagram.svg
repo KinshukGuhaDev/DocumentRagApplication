@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="100%" height="100%" style="background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="retrieval-hdr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Markers -->
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#c084fc" />
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-emerald" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 1 1 L 7 4 L 1 7 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <style>
+    .flow-retrieval-line {
+      stroke: #c084fc;
+      stroke-width: 2.2;
+      stroke-dasharray: 6 5;
+      animation: dashFlowRev 1.6s linear infinite;
+      fill: none;
+    }
+    .flow-dense-line {
+      stroke: #38bdf8;
+      stroke-width: 2;
+      stroke-dasharray: 5 4;
+      animation: dashFlowRev 1.8s linear infinite;
+      fill: none;
+    }
+    .flow-lexical-line {
+      stroke: #f472b6;
+      stroke-width: 2;
+      stroke-dasharray: 5 4;
+      animation: dashFlowRev 1.8s linear infinite;
+      fill: none;
+    }
+    @keyframes dashFlowRev {
+      from { stroke-dashoffset: 22; }
+      to { stroke-dashoffset: 0; }
+    }
+  </style>
+
+  <!-- Banner Header -->
+  <rect x="30" y="20" width="1140" height="60" rx="10" fill="url(#retrieval-hdr)" />
+  <text x="55" y="46" fill="#ffffff" font-size="20" font-weight="700">Deep Dive: Hybrid Retrieval &amp; Grounded RAG Synthesis</text>
+  <text x="55" y="65" fill="#e0f2fe" font-size="12">RAGRetriever.py ➔ Vector Store Query ➔ Dense+Lexical Reranker ➔ Anti-Hallucination Prompting ➔ Multi-LLM Output</text>
+
+  <!-- Stage 1: Question & Vectorization -->
+  <g transform="translate(30, 100)">
+    <rect width="250" height="650" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="250" height="38" rx="10" fill="#2e1a47" />
+    <text x="18" y="24" fill="#c084fc" font-size="13" font-weight="700">1. QUERY INGESTION</text>
+
+    <!-- Query Input Box -->
+    <rect x="15" y="55" width="220" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#d8b4fe" font-size="12" font-weight="700">User Query</text>
+    <rect x="25" y="90" width="200" height="42" rx="6" fill="#141d2e" stroke="#38bdf8" stroke-width="1" />
+    <text x="35" y="115" fill="#f8fafc" font-size="11">"What is the energy usage?"</text>
+    <text x="25" y="152" fill="#94a3b8" font-size="10.5">• Non-empty string validation</text>
+    <text x="25" y="170" fill="#94a3b8" font-size="10.5">• Trims and strips characters</text>
+    <text x="25" y="188" fill="#94a3b8" font-size="10.5">• Maintains session history</text>
+
+    <!-- Query Vectorization Box -->
+    <rect x="15" y="225" width="220" height="200" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="248" fill="#38bdf8" font-size="12" font-weight="700">Query Vectorizer</text>
+    <text x="25" y="270" fill="#f1f5f9" font-size="11">EmbeddingManager.embed_query()</text>
+    <rect x="25" y="285" width="200" height="50" rx="6" fill="#334155" />
+    <text x="35" y="305" fill="#a7f3d0" font-size="10.5">Vector: [ 0.041, -0.119, ... ]</text>
+    <text x="35" y="322" fill="#38bdf8" font-size="10">Dim: 384 or 1536 float32</text>
+    <text x="25" y="356" fill="#94a3b8" font-size="10.5">• L2 normalization applied</text>
+    <text x="25" y="374" fill="#94a3b8" font-size="10.5">• Dimension check vs collection</text>
+    <text x="25" y="392" fill="#94a3b8" font-size="10.5">• Strict finite / NaN guard</text>
+    <text x="25" y="410" fill="#34d399" font-size="10.5" font-weight="600">✓ Unit-length query vector</text>
+
+    <!-- Collection Compatibility -->
+    <rect x="15" y="445" width="220" height="185" rx="8" fill="#141d2e" stroke="#334155" stroke-width="1" />
+    <text x="25" y="470" fill="#f59e0b" font-size="11.5" font-weight="700">Collection Verification</text>
+    <text x="25" y="492" fill="#94a3b8" font-size="10">Inspects active collection metadata:</text>
+    <text x="25" y="512" fill="#cbd5e1" font-size="10">✓ Model match check</text>
+    <text x="25" y="530" fill="#cbd5e1" font-size="10">✓ Dimension match check</text>
+    <text x="25" y="548" fill="#cbd5e1" font-size="10">✓ ChromaDB connection alive</text>
+    <rect x="25" y="565" width="200" height="50" rx="6" fill="#064e3b" />
+    <text x="35" y="585" fill="#6ee7b7" font-size="10" font-weight="700">Index Certified</text>
+    <text x="35" y="600" fill="#a7f3d0" font-size="9.5">Safe to execute search</text>
+  </g>
+
+  <!-- Stage 2: Candidate Pool & Hybrid Reranking -->
+  <g transform="translate(310, 100)">
+    <rect width="320" height="650" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="320" height="38" rx="10" fill="#1e293b" />
+    <text x="18" y="24" fill="#38bdf8" font-size="13" font-weight="700">2. HYBRID SEARCH &amp; RERANKING</text>
+
+    <!-- Candidate Pool Box -->
+    <rect x="15" y="55" width="290" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#f59e0b" font-size="12" font-weight="700">High-Recall Candidate Pool</text>
+    <text x="25" y="98" fill="#f1f5f9" font-size="11">Pre-fetches Oversampled Candidates:</text>
+    <rect x="25" y="110" width="270" height="32" rx="5" fill="#334155" />
+    <text x="35" y="130" fill="#38bdf8" font-size="11" font-weight="600">Pool Size = min(max(TOP_K * 4, 12), Total)</text>
+    <text x="25" y="160" fill="#94a3b8" font-size="10.5">• Prevents exact facts from being dropped</text>
+    <text x="25" y="176" fill="#94a3b8" font-size="10.5">• Pulls docs, metadata, distances &amp; IDs</text>
+    <text x="25" y="192" fill="#94a3b8" font-size="10.5">• De-duplicates multiple chunk matches</text>
+
+    <!-- Hybrid Reranker Box -->
+    <rect x="15" y="225" width="290" height="260" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.2" />
+    <text x="25" y="248" fill="#c084fc" font-size="12" font-weight="700">Hybrid Scoring Formula</text>
+
+    <!-- Dense component -->
+    <rect x="25" y="260" width="270" height="52" rx="6" fill="#141d2e" stroke="#0284c7" stroke-width="1" />
+    <text x="35" y="280" fill="#38bdf8" font-size="11" font-weight="700">70% Dense Similarity (Vectors)</text>
+    <text x="35" y="298" fill="#94a3b8" font-size="10">similarity_score = 1.0 - cosine_distance</text>
+
+    <!-- Lexical component -->
+    <rect x="25" y="322" width="270" height="66" rx="6" fill="#2d132c" stroke="#db2777" stroke-width="1" />
+    <text x="35" y="340" fill="#f472b6" font-size="11" font-weight="700">30% Lexical Overlap (Keywords)</text>
+    <text x="35" y="356" fill="#fbcfe8" font-size="9.5">lexical_score = (query ∩ doc) / query_words</text>
+    <text x="35" y="372" fill="#fbcfe8" font-size="9.5">+ 0.20 Phrase Match Bonus if exact query present</text>
+
+    <!-- Combined score -->
+    <rect x="25" y="398" width="270" height="42" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="1" />
+    <text x="35" y="416" fill="#e9d5ff" font-size="10.5" font-weight="700">Final: 0.70 × Sim + 0.30 × Lexical</text>
+    <text x="35" y="432" fill="#94a3b8" font-size="9.5">Sorts candidates descending by rerank_score</text>
+
+    <text x="25" y="468" fill="#f59e0b" font-size="10.5" font-weight="600">Threshold Cutoff: rerank_score &gt;= 0.50</text>
+
+    <!-- Top-K Selection -->
+    <rect x="15" y="505" width="290" height="125" rx="8" fill="#132e27" stroke="#10b981" stroke-width="1" />
+    <text x="25" y="528" fill="#34d399" font-size="12" font-weight="700">Top-K Selection (TOP_K = 3)</text>
+    <text x="25" y="550" fill="#a7f3d0" font-size="10.5">Selects the highest scoring top 3 chunks.</text>
+    <text x="25" y="568" fill="#a7f3d0" font-size="10.5">Captures file provenance &amp; page numbers:</text>
+    <text x="25" y="588" fill="#f8fafc" font-size="10">Source 1: report.pdf (page 4, score 0.88)</text>
+    <text x="25" y="604" fill="#f8fafc" font-size="10">Source 2: notes.docx (page 1, score 0.79)</text>
+    <text x="25" y="620" fill="#f8fafc" font-size="10">Source 3: metrics.xlsx (sheet 2, score 0.71)</text>
+  </g>
+
+  <!-- Stage 3: Grounded LLM Synthesis & Citations -->
+  <g transform="translate(660, 100)">
+    <rect width="510" height="650" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <rect width="510" height="38" rx="10" fill="#1e3a47" />
+    <text x="18" y="24" fill="#38bdf8" font-size="13" font-weight="700">3. GROUNDED PROMPTING &amp; MULTI-LLM SYNTHESIS</text>
+
+    <!-- Context & Prompt Builder Box -->
+    <rect x="15" y="55" width="480" height="235" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="78" fill="#38bdf8" font-size="12" font-weight="700">Context Assembly &amp; Anti-Hallucination Guardrails</text>
+
+    <rect x="25" y="90" width="460" height="185" rx="6" fill="#0b1120" stroke="#1e293b" stroke-width="1" />
+    <text x="35" y="110" fill="#f59e0b" font-size="11" font-weight="700">Strict Prompt Template Enforced:</text>
+    <text x="35" y="128" fill="#cbd5e1" font-size="10">"You are a document question-answering assistant."</text>
+    <text x="35" y="145" fill="#f87171" font-size="10">✕ Rule 1: Do NOT use outside knowledge.</text>
+    <text x="35" y="162" fill="#f87171" font-size="10">✕ Rule 2: Do NOT invent facts.</text>
+    <text x="35" y="180" fill="#e2e8f0" font-size="10">✓ Rule 3: If context lacks answer, explicitly declare:</text>
+    <text x="50" y="196" fill="#fde68a" font-size="9.5">"The documents do not contain enough information to answer this."</text>
+    <text x="35" y="214" fill="#34d399" font-size="10">✓ Rule 4: Cite supporting sources using [Source 1], [Source 2], etc.</text>
+    <text x="35" y="232" fill="#38bdf8" font-size="10">Formatted Context Blocks:</text>
+    <text x="50" y="248" fill="#94a3b8" font-size="9.5">[Source 1] File: doc.pdf | Page: 3 | Content: "..."</text>
+    <text x="50" y="262" fill="#94a3b8" font-size="9.5">[Source 2] File: data.xlsx | Sheet: Sales | Content: "..."</text>
+
+    <!-- Multi-LLM Execution Box -->
+    <rect x="15" y="305" width="480" height="150" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="25" y="328" fill="#a855f7" font-size="12" font-weight="700">LLM Generation Engine</text>
+
+    <g transform="translate(25, 340)">
+      <rect width="220" height="50" rx="6" fill="#334155" />
+      <text x="12" y="20" fill="#f8fafc" font-size="11" font-weight="700">Google Gemini</text>
+      <text x="12" y="36" fill="#38bdf8" font-size="10">gemini-3.5-flash-lite (Temp=0)</text>
+
+      <rect x="235" y="0" width="220" height="50" rx="6" fill="#334155" />
+      <text x="247" y="20" fill="#f8fafc" font-size="11" font-weight="700">OpenAI GPT</text>
+      <text x="247" y="36" fill="#38bdf8" font-size="10">gpt-4.1-mini (Temp=0)</text>
+    </g>
+
+    <text x="25" y="415" fill="#94a3b8" font-size="10.5">• Deterministic zero-temperature generation for maximum factual precision</text>
+    <text x="25" y="433" fill="#94a3b8" font-size="10.5">• Automatically appends compiled bibliography and citations to answer</text>
+
+    <!-- Final Output Box -->
+    <rect x="15" y="470" width="480" height="160" rx="8" fill="#064e3b" stroke="#10b981" stroke-width="1.2" />
+    <text x="25" y="495" fill="#34d399" font-size="12.5" font-weight="700">Comprehensive Structured Return Dictionary</text>
+    
+    <rect x="25" y="508" width="460" height="108" rx="6" fill="#022c22" />
+    <text x="35" y="526" fill="#a7f3d0" font-size="10.5">{</text>
+    <text x="50" y="542" fill="#6ee7b7" font-size="10">"question": "What is the energy usage?",</text>
+    <text x="50" y="558" fill="#6ee7b7" font-size="10">"answer": "Vertical forests reduce energy by 30% [Source 1]...",</text>
+    <text x="50" y="574" fill="#6ee7b7" font-size="10">"status": "success",</text>
+    <text x="50" y="590" fill="#6ee7b7" font-size="10">"sources": [ { "source": "forests.pdf", "page": 2, "score": 0.88, ... } ],</text>
+    <text x="50" y="606" fill="#6ee7b7" font-size="10">"history": [ { "question": ..., "answer": ... } ]</text>
+    <text x="35" y="614" fill="#a7f3d0" font-size="10.5">}</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 280 425 L 310 425" class="flow-retrieval-line" marker-end="url(#arrow-purple)" />
+  <path d="M 630 425 L 660 425" class="flow-retrieval-line" marker-end="url(#arrow-purple)" />
+
+</svg>
