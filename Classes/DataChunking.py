@@ -9,6 +9,8 @@ from config import (
     OPENAI_API_KEY,
     GEMINI_API_KEY,
     LLM_MODEL_TEMPERATURE,
+    NVIDIA_API_KEY,
+    NVIDIA_BASE_URL,
 )
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
@@ -37,6 +39,7 @@ class DataChunking:
         llm_model_temperature:float = LLM_MODEL_TEMPERATURE,
         openai_api_key:str = OPENAI_API_KEY,
         gemini_api_key:str = GEMINI_API_KEY,
+        nvidia_api_key:str = NVIDIA_API_KEY,
     ):
         self.chunking_strategy = chunking_strategy
         self._get_chunk_size(chunk_size)
@@ -60,6 +63,7 @@ class DataChunking:
         self.sentence_model = None
         self.openai_api_key = openai_api_key
         self.gemini_api_key = gemini_api_key
+        self.nvidia_api_key = nvidia_api_key
         self.agentic_cache = {}
         try:
             self.tokenizer = tiktoken.get_encoding("cl100k_base")
@@ -111,6 +115,17 @@ class DataChunking:
                 self.llm = ChatGoogleGenerativeAI(
                     model=self.llm_model_name,
                     google_api_key=gemini_api_key,
+                )
+            elif self.llm_model_type == "nvidia":
+                if not self.nvidia_api_key:
+                    raise ValueError(
+                        "NVIDIA_API_KEY is required for NVIDIA embeddings"
+                    )
+                self.llm = ChatOpenAI(
+                    model="nvidia/" + self.llm_model_name,
+                    temperature=llm_model_temperature,
+                    api_key=NVIDIA_API_KEY,
+                    base_url=NVIDIA_BASE_URL,
                 )
             else:
                 raise ValueError(

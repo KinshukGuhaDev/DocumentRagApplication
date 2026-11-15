@@ -11,6 +11,8 @@ from config import (
     LLM_MODEL_TYPE,
     LLM_MODEL_NAME,
     LLM_MODEL_TEMPERATURE,
+    NVIDIA_API_KEY,
+    NVIDIA_BASE_URL
 )
 import time
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -56,6 +58,17 @@ class RAGRetriever:
             self.llm = ChatGoogleGenerativeAI(
                 model=LLM_MODEL_NAME,
                 google_api_key=GEMINI_API_KEY,
+            )
+        elif LLM_MODEL_TYPE == "nvidia":
+            if not NVIDIA_API_KEY:
+                raise ValueError(
+                    "NVIDIA_API_KEY is required for NVIDIA embeddings"
+                )
+            self.llm = ChatOpenAI(
+                model="nvidia/" + LLM_MODEL_NAME,
+                temperature=LLM_MODEL_TEMPERATURE,
+                api_key=NVIDIA_API_KEY,
+                base_url=NVIDIA_BASE_URL,
             )
         else:
             raise ValueError(

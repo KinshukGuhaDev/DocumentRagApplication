@@ -200,7 +200,7 @@
     <rect width="420" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" />
     <rect x="12" y="18" width="50" height="84" rx="6" fill="#4c1d95" />
     <text x="37" y="65" fill="#c084fc" font-size="15" font-weight="700" text-anchor="middle">LLM</text>
-    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Grounded LLM Synthesis (Gemini / OpenAI)</text>
+    <text x="75" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Grounded LLM Synthesis (NVIDIA / Gemini / OpenAI)</text>
     <text x="75" y="50" fill="#38bdf8" font-size="11">Strict anti-hallucination prompt ("Only use provided context")</text>
     <text x="75" y="68" fill="#94a3b8" font-size="10.5">Automated source &amp; page number attribution ([Source 1]...)</text>
     <text x="75" y="86" fill="#10b981" font-size="10.5" font-weight="600">✓ Structured JSON Output (question, answer, sources, history)</text>

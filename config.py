@@ -20,11 +20,13 @@ SEMANTIC_THRESHOLDS = {
 #Model Configurations
 EMBEDDING_MODEL_TYPE = "sentence-transformers" # Options: "sentence-transformers", "openai"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"  # Options: "all-MiniLM-L6-v2", "text-embedding-3-small"
-LLM_MODEL_TYPE="google" # Options: "google", "openai"
-LLM_MODEL_NAME="gemini-3.5-flash-lite" # Options: "gemini-3.5-flash-lite", "gpt-4.1-mini"
+LLM_MODEL_TYPE="nvidia" # Options: "google", "openai", "nvidia"
+LLM_MODEL_NAME="nemotron-3.5-super-vl-120b-a12b" # Options: "gemini-3.5-flash-lite", "gpt-4.1-mini", "nemotron-3.5-super-vl-120b-a12b"
+NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
 LLM_MODEL_TEMPERATURE = 0                     
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 HF_HUB_DISABLE_SYMLINKS_WARNING=1
 HF_HUB_DISABLE_PROGRESS_BARS=1
 

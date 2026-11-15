@@ -40,7 +40,7 @@ This application is engineered specifically to eliminate these weaknesses.
 - **Universal Multi-Format Ingestion**: Ingests unstructured documents (PDF, DOCX, TXT), tabular sheets (CSV, Excel), hierarchical data (JSON), and relational databases (SQL) while preserving structural integrity.
 - **Intelligent Chunking with Zero Context Loss**: Automatically applies atomic row extraction for spreadsheets/tables and semantic/sentence packing for natural prose.
 - **High-Recall Hybrid Reranking**: Combines **70% Dense Semantic Similarity** (vector embeddings) with **30% Lexical Keyword Overlap** (exact keyword & phrase matching) over an oversampled candidate pool.
-- **Strict Anti-Hallucination Answers**: Synthesizes verified answers using **Google Gemini** or **OpenAI GPT** with zero temperature and mandatory provenance citations (`[Source 1] file.pdf (page 4)`).
+- **Strict Anti-Hallucination Answers**: Synthesizes verified answers using **NVIDIA NIM** (e.g. Nemotron), **Google Gemini**, or **OpenAI GPT** with zero temperature and mandatory provenance citations (`[Source 1] file.pdf (page 4)`).
 - **Persistent Vector Store**: Stores vectors locally in **ChromaDB** using cosine similarity with automatic dimension checking and idempotent SHA-256 upserting.
 
 ---
@@ -50,7 +50,7 @@ This application is engineered specifically to eliminate these weaknesses.
 The following animated flow diagram illustrates the end-to-end lifecycle of a document from raw bytes to vector storage, and how a user query traverses the hybrid search and generation stages:
 
 <p align="center">
-  <img src="assets/images/rag-system-overview.svg" alt="Document RAG System End-to-End Architecture" width="100%" />
+  <img src="Assets/Images/rag-system-overview.svg" alt="Document RAG System End-to-End Architecture" width="100%" />
 </p>
 
 The system operates across two decoupled, asynchronous phases:
@@ -69,7 +69,7 @@ The system operates across two decoupled, asynchronous phases:
 | **Dual Embedding Backends** | Run locally offline with **Sentence-Transformers** (`all-MiniLM-L6-v2`, 384 dims) or cloud-scale with **OpenAI** (`text-embedding-3-small`, 1536 dims). Includes pre-flight token limit checks and L2 normalization. |
 | **ChromaDB Store & Guardrails** | Local persistent store (`Database/vector_store`) configured with HNSW Cosine distance. Employs a dimension guardrail to prevent collection corruption and SHA-256 idempotent upserts. |
 | **Hybrid Search & Reranking** | Pre-fetches an oversampled candidate pool ($K \times 4$), reranks by `0.70 × Cosine Similarity + 0.30 × Lexical Overlap`, adds a +0.20 phrase bonus, and cuts off low scores via `SCORE_THRESHOLD`. |
-| **Grounded LLM Generation** | Zero-temperature synthesis via **Google Gemini** (`gemini-3.5-flash-lite`) or **OpenAI** (`gpt-4.1-mini`) with automatic fallback to *"The documents do not contain enough information to answer this."* |
+| **Grounded LLM Generation** | Zero-temperature synthesis via **NVIDIA NIM** (`nemotron-3.5-super-vl-120b-a12b`), **Google Gemini** (`gemini-3.5-flash-lite`), or **OpenAI** (`gpt-4.1-mini`) with automatic fallback to *"The documents do not contain enough information to answer this."* |
 
 ---
 
@@ -78,7 +78,7 @@ The system operates across two decoupled, asynchronous phases:
 ### Prerequisites
 - **Python 3.10+** (Python 3.10, 3.11, or 3.12 recommended)
 - **Git**
-- A **Google Gemini API Key** or **OpenAI API Key**
+- An **NVIDIA NIM API Key**, **Google Gemini API Key**, or **OpenAI API Key**
 
 ### 1. Clone the Repository
 ```bash
@@ -127,6 +127,9 @@ All pipeline configurations are centralized in [`config.py`](config.py) and envi
 ### 1. Environment Variables (`.env`)
 Create a `.env` file in the project root:
 ```env
+# NVIDIA NIM API Key (Default LLM provider)
+NVIDIA_API_KEY="your-nvidia-api-key"
+
 # Optional if using Google Gemini
 GEMINI_API_KEY="your-google-gemini-api-key"
 
@@ -147,9 +150,12 @@ OPENAI_API_KEY="your-openai-api-key"
 | `SEMANTIC_THRESHOLDS` | `{"sentence-transformers": 0.65, "openai": 0.80}` | Cosine similarity threshold for semantic topic transitions. |
 | `EMBEDDING_MODEL_TYPE` | `"sentence-transformers"` | `"sentence-transformers"` (local) or `"openai"` (cloud API). |
 | `EMBEDDING_MODEL_NAME` | `"all-MiniLM-L6-v2"` | `"all-MiniLM-L6-v2"` (384-dim) or `"text-embedding-3-small"` (1536-dim). |
-| `LLM_MODEL_TYPE` | `"google"` | `"google"` (Gemini) or `"openai"` (GPT). |
-| `LLM_MODEL_NAME` | `"gemini-3.5-flash-lite"` | `"gemini-3.5-flash-lite"`, `"gpt-4.1-mini"`, or another supported model. |
+| `LLM_MODEL_TYPE` | `"nvidia"` | `"nvidia"`, `"google"`, or `"openai"`. |
+| `LLM_MODEL_NAME` | `"nemotron-3.5-super-vl-120b-a12b"` | `"nemotron-3.5-super-vl-120b-a12b"`, `"gemini-3.5-flash-lite"`, or `"gpt-4.1-mini"`. |
+| `NVIDIA_BASE_URL` | `"https://integrate.api.nvidia.com/v1"` | Base endpoint URL for NVIDIA NIM inference. |
 | `LLM_MODEL_TEMPERATURE` | `0` | Controls randomness (0 = deterministic, factual). |
+| `HF_HUB_DISABLE_SYMLINKS_WARNING` | `1` | Suppresses HuggingFace symlink warnings on Windows/WSL. |
+| `HF_HUB_DISABLE_PROGRESS_BARS` | `1` | Suppresses verbose HuggingFace download progress bars. |
 | `VECTOR_DATABASE` | `"chromadb"` | Vector database provider. |
 | `VECTOR_STORE_PATH` | `"Database/vector_store"` | Local disk directory where ChromaDB stores indexes and SQLite files. |
 | `VECTOR_STORE_COLLECTION_NAME` | `"pdf_documents_cosine_v2"` | ChromaDB collection name. |
@@ -165,7 +171,7 @@ OPENAI_API_KEY="your-openai-api-key"
 The ingestion pipeline converts disparate file formats into vector representations without data corruption:
 
 <p align="center">
-  <img src="assets/images/injestion-pipeline-diagram.svg" alt="Document Ingestion Pipeline Deep Dive" width="100%" />
+  <img src="Assets/Images/injestion-pipeline-diagram.svg" alt="Document Ingestion Pipeline Deep Dive" width="100%" />
 </p>
 
 #### How It Works Step-by-Step:
@@ -195,7 +201,7 @@ The ingestion pipeline converts disparate file formats into vector representatio
 The retrieval pipeline finds relevant context and ensures that generated responses are strictly grounded in document facts:
 
 <p align="center">
-  <img src="assets/images/retrieval-pipeline-diagram.svg" alt="Retrieval and Synthesis Pipeline Deep Dive" width="100%" />
+  <img src="Assets/Images/retrieval-pipeline-diagram.svg" alt="Retrieval and Synthesis Pipeline Deep Dive" width="100%" />
 </p>
 
 #### How It Works Step-by-Step:
@@ -338,8 +344,8 @@ for source in response["sources"]:
 
 ```text
 RagApplication/
-├── assets/
-│   └── images/
+├── Assets/
+│   └── Images/
 │       ├── rag-system-overview.svg          # Animated End-to-End Architecture diagram
 │       ├── injestion-pipeline-diagram.svg   # Animated Ingestion Pipeline diagram
 │       └── retrieval-pipeline-diagram.svg   # Animated Retrieval & Reranker diagram
@@ -377,9 +383,9 @@ RagApplication/
 - **Cause**: You switched embedding models in `config.py` (e.g. from `all-MiniLM-L6-v2` with 384 dimensions to `text-embedding-3-small` with 1536 dimensions) while keeping the same collection name.
 - **Fix**: Either update `VECTOR_STORE_COLLECTION_NAME` in `config.py` to a new name (e.g. `"pdf_documents_openai_v1"`) or delete the old index in `Database/vector_store` and re-run ingestion.
 
-### Q2: `GEMINI_API_KEY is required for Google embeddings` or `OPENAI_API_KEY is required`
-- **Cause**: The API key is missing from your `.env` file or environment.
-- **Fix**: Create a `.env` file in the root folder with `GEMINI_API_KEY="your_key"` or `OPENAI_API_KEY="your_key"`.
+### Q2: `NVIDIA_API_KEY is required` or `GEMINI_API_KEY / OPENAI_API_KEY is required`
+- **Cause**: The API key for your chosen `LLM_MODEL_TYPE` is missing from your `.env` file or environment.
+- **Fix**: Create a `.env` file in the root folder with `NVIDIA_API_KEY="your_key"`, `GEMINI_API_KEY="your_key"`, or `OPENAI_API_KEY="your_key"`.
 
 ### Q3: `Can't find model 'en_core_web_sm'`
 - **Cause**: The spaCy English language model has not been downloaded into your virtual environment.
