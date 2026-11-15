@@ -17,7 +17,7 @@ __pycache__/
 *.log
 
 # Dataset and generated files
-Notebook/
+Notebooks/
 
 # Vector databases and generated indexes
 Database/
